@@ -1,5 +1,5 @@
 CREATE TABLE users(
-    id uuid primary key ,
+    id uuid primary key,
     phone varchar(20) unique,
     email varchar(50) unique,
     created_at timestamp not null default now(),
@@ -10,7 +10,7 @@ CREATE TABLE users(
 CREATE TABLE applications(
     id uuid primary key,
     user_id uuid not null references users(id),
-    full_name varchar(100) not null ,
+    full_name varchar(100) not null,
     age integer check(age > 0 and age <= 100) not null,
     gender char(1) not null check (gender in ('М', 'Ж')),
     marital_status varchar(15) not null check (marital_status in ('вдовец/вдова', 'в браке', 'одинок/а', 'разведен/а')),
