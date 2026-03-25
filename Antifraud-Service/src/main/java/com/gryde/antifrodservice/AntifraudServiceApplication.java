@@ -1,13 +1,13 @@
-package com.gryde.surveyservice;
+package com.gryde.antifrodservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SurveyServiceApplication {
+public class AntifraudServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SurveyServiceApplication.class, args);
+        SpringApplication.run(AntifraudServiceApplication.class, args);
     }
 
 }

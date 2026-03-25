@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.gryde'
 version = '0.0.1-SNAPSHOT'
-description = 'Antifrod-Service'
+description = 'Antifraud-Service'
 
 java {
     toolchain {

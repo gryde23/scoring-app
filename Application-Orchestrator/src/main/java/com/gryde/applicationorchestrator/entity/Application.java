@@ -26,7 +26,7 @@ public class Application {
     private Integer age;
 
     @Column(name = "gender", nullable = false)
-    private Character gender;
+    private char gender;
 
     @Column(name = "marital_status", nullable = false)
     @Convert(converter = MaritalStatusConverter.class)
@@ -39,7 +39,7 @@ public class Application {
     private Education education;
 
     @Column(name = "region", nullable = false)
-    @Convert(converter = RegionsConverter.class)
+    @Convert(converter = RegionConverter.class)
     private Region region;
 
     @Column(name = "employment_type", nullable = false)

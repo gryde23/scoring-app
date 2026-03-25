@@ -1,13 +1,13 @@
-package com.gryde.antifrodservice;
+package com.gryde.surveyservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AntifrodServiceApplication {
+public class ScoringServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AntifrodServiceApplication.class, args);
+        SpringApplication.run(ScoringServiceApplication.class, args);
     }
 
 }

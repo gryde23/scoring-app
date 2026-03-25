@@ -4,17 +4,15 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Antifrod-Service" />
-        <option name="gradleJvm" value="21" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Antifraud-Service" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/Antifrod-Service" />
+            <option value="$PROJECT_DIR$/Antifraud-Service" />
           </set>
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Application-Orchestrator" />
-        <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Application-Orchestrator" />
@@ -23,7 +21,6 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Bureau-Service" />
-        <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Bureau-Service" />
@@ -31,11 +28,10 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Survey-Service" />
-        <option name="gradleJvm" value="21" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Scoring-Service" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/Survey-Service" />
+            <option value="$PROJECT_DIR$/Scoring-Service" />
           </set>
         </option>
       </GradleProjectSettings>
