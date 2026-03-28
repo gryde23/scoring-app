@@ -1,35 +1,65 @@
 package com.gryde.applicationorchestrator.dto;
 
 import com.gryde.applicationorchestrator.enums.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
+public record ApplicationCreateRequest(
 
-public record ApplicationDTO(
-        UUID id,
+        @NotBlank
         String fullName,
+
+        @NotNull
         Integer age,
-        char gender,
+
+        @NotNull
+        Character gender,
+
+        @NotNull
         MaritalStatus maritalStatus,
+
         Integer dependents,
+
+        @NotNull
         Education education,
+
+        @NotNull
         Region region,
+
+        @NotNull
         EmploymentType employmentType,
+
         Integer employmentLength,
+
+        @NotNull
         Integer monthlyIncome,
+
         Integer additionalIncome,
-        boolean hasProperty,
-        boolean hasCar,
+
+        @NotNull
+        Boolean hasProperty,
+
+        @NotNull
+        Boolean hasCar,
+
         Integer existingCards,
+
         Integer existingLoans,
+
         Integer totalMonthlyDebt,
-        boolean hasSalaryProject,
-        boolean hasDeposit,
+
+        @NotNull
+        Boolean hasSalaryProject,
+
+        @NotNull
+        Boolean hasDeposit,
+
+        @NotNull
         CardType cardTypeRequested,
-        ApplicationStatus status,
-        LocalDateTime createdAt,
-        UUID userUUID,
-        UUID applicationDecisionUUID
+
+        @NotNull
+        UUID userUUID
 ) {
 }

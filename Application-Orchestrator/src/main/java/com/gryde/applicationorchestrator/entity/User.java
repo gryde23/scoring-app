@@ -18,8 +18,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "phone", unique = true)
     private String phone;
 
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "created_at")
