@@ -1,14 +1,15 @@
 package com.gryde.applicationorchestrator.service;
 
+import com.gryde.applicationorchestrator.controller.UserController;
 import com.gryde.applicationorchestrator.dto.CreateUserRequest;
 import com.gryde.applicationorchestrator.dto.UserResponse;
 import com.gryde.applicationorchestrator.entity.User;
 import com.gryde.applicationorchestrator.mapper.UserMapper;
 import com.gryde.applicationorchestrator.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserResponse createUser(CreateUserRequest request) {
         if (request.email() == null && request.phone() == null) {
@@ -28,6 +31,7 @@ public class UserService {
         entity.setPhone(request.phone());
 
         User saved = userRepository.save(entity);
+        logger.info("Saved user: {}", saved);
         return userMapper.toUserResponse(saved);
     }
 
@@ -36,10 +40,10 @@ public class UserService {
 
         if (phone != null) {
             user = userRepository.findUserByPhone(phone);
-            System.out.println("Found user with UUID: " + user.getId() + " phone: " + user.getPhone());
+            logger.info("Found user by phone: {}", user);
         } else {
             user = userRepository.findUserByEmail(email);
-            System.out.println("Found user with UUID: " + user.getId()+ " email: " + user.getEmail());
+            logger.info("Found user by email: {}", user);
         }
 
         return userMapper.toUserResponse(user);

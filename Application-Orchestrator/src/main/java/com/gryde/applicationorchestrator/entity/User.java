@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = "applications")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
