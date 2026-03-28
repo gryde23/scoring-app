@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/Antifraud-Service" />
-    <file type="web" url="file://$PROJECT_DIR$/Application-Orchestrator" />
-    <file type="web" url="file://$PROJECT_DIR$/Bureau-Service" />
-    <file type="web" url="file://$PROJECT_DIR$/Scoring-Service" />
+    <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

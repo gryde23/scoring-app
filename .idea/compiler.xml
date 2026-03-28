@@ -8,13 +8,34 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.42/8365263844ebb62398e0dc33057ba10ba472d3b8/lombok-1.18.42.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.6.3/52e345c907fbf173b376586c7f8b131d53fa5867/mapstruct-processor-1.6.3.jar" />
         </processorPath>
-        <module name="Application-Orchestrator.main" />
+        <module name="scoring-app.application-orchestrator.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="21">
+      <module name="Antifraud-Service" target="21" />
+      <module name="Antifraud-Service.main" target="21" />
+      <module name="Antifraud-Service.test" target="21" />
       <module name="Antifrod-Service" target="21" />
       <module name="Antifrod-Service.main" target="21" />
       <module name="Antifrod-Service.test" target="21" />
+      <module name="Application-Orchestrator" target="21" />
+      <module name="Application-Orchestrator.main" target="21" />
+      <module name="Application-Orchestrator.test" target="21" />
+      <module name="Bureau-Service" target="21" />
+      <module name="Bureau-Service.main" target="21" />
+      <module name="Bureau-Service.test" target="21" />
+      <module name="scoring-app.Application-Orchestrator" target="21" />
+      <module name="scoring-app.Application-Orchestrator.main" target="21" />
+      <module name="scoring-app.Application-Orchestrator.test" target="21" />
+      <module name="scoring-app.Scoring-Contract" target="21" />
+      <module name="scoring-app.Scoring-Contract.main" target="21" />
+      <module name="scoring-app.Scoring-Contract.test" target="21" />
+      <module name="scoring-app.Scoring-Service" target="21" />
+      <module name="scoring-app.Scoring-Service.main" target="21" />
+      <module name="scoring-app.Scoring-Service.test" target="21" />
+      <module name="Scoring-Service" target="21" />
+      <module name="Scoring-Service.main" target="21" />
+      <module name="Scoring-Service.test" target="21" />
       <module name="Survey-Service.main" target="21" />
       <module name="Survey-Service.test" target="21" />
     </bytecodeTargetLevel>

@@ -1,0 +1,8 @@
+rootProject.name = 'scoring-app'
+
+include 'application-orchestrator'
+include 'scoring-service'
+include 'scoring-contract'
+include 'bureau-service'
+include 'antifraud-service'
+

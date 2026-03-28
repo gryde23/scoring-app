@@ -4,34 +4,15 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Antifraud-Service" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/Antifraud-Service" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Application-Orchestrator" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Application-Orchestrator" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Bureau-Service" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Bureau-Service" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Scoring-Service" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Scoring-Service" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/antifraud-service" />
+            <option value="$PROJECT_DIR$/application-orchestrator" />
+            <option value="$PROJECT_DIR$/bureau-service" />
+            <option value="$PROJECT_DIR$/scoring-contract" />
+            <option value="$PROJECT_DIR$/scoring-service" />
           </set>
         </option>
       </GradleProjectSettings>
