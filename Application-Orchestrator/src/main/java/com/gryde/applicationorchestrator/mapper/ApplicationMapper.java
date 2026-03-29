@@ -3,7 +3,6 @@ package com.gryde.applicationorchestrator.mapper;
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
 import com.gryde.applicationorchestrator.dto.ApplicationDTO;
 import com.gryde.applicationorchestrator.entity.Application;
-import com.gryde.applicationorchestrator.entity.ApplicationDecision;
 import com.gryde.applicationorchestrator.entity.User;
 import com.gryde.applicationorchestrator.enums.ApplicationStatus;
 

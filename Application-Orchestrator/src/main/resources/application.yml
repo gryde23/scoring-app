@@ -1,0 +1,21 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: Application-Orchestrator
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orchestrator_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+services:
+  scoring:
+    url: http://localhost:8082
+  bureau:
+    url: http://localhost:8083
+  antifraud:
+    url: http://localhost:8084
