@@ -25,7 +25,7 @@ public class User {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

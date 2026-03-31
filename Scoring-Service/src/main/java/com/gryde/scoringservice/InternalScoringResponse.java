@@ -1,4 +1,4 @@
-package com.gryde.surveyservice;
+package com.gryde.scoringservice;
 
 import java.util.List;
 

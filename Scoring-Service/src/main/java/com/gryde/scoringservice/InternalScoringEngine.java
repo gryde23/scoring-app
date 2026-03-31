@@ -1,10 +1,12 @@
-package com.gryde.surveyservice;
+package com.gryde.scoringservice;
 
 import com.gryde.contract.scoring.ScoringRequest;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class InternalScoringEngine {
 
     public InternalScoringResponse calculateInternalScore(ScoringRequest request) {
@@ -137,7 +139,7 @@ public class InternalScoringEngine {
         return new InternalScoringResponse(score, scoringReasons);
     }
 
-    public boolean checkStopFactor(ScoringRequest request, List<String> scoringReasons) {
+    private boolean checkStopFactor(ScoringRequest request, List<String> scoringReasons) {
         if (request.age() < 18 || request.age() > 70) {
             scoringReasons.add("Неподходящий возраст");
             return true;

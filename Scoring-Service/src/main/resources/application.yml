@@ -4,3 +4,7 @@ server:
 spring:
   application:
     name: Survey-Service
+
+services:
+  ml:
+    url: http://localhost:8000

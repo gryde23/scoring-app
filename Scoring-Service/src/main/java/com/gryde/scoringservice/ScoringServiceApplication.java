@@ -1,4 +1,4 @@
-package com.gryde.surveyservice;
+package com.gryde.scoringservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

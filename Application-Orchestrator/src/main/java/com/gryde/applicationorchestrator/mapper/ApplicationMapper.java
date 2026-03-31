@@ -5,6 +5,7 @@ import com.gryde.applicationorchestrator.dto.ApplicationDTO;
 import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.User;
 import com.gryde.applicationorchestrator.enums.ApplicationStatus;
+import com.gryde.contract.scoring.ScoringRequest;
 
 public final class ApplicationMapper {
 
@@ -74,6 +75,29 @@ public final class ApplicationMapper {
         application.setStatus(ApplicationStatus.IN_PROGRESS);
 
         return application;
+    }
+
+    public static ScoringRequest toScoringRequest(ApplicationDTO applicationDTO) {
+        return new ScoringRequest(
+                applicationDTO.age(),
+                applicationDTO.gender(),
+                applicationDTO.maritalStatus().getDbValue(),
+                applicationDTO.dependents(),
+                applicationDTO.education().getDbValue(),
+                applicationDTO.region().getDbValue(),
+                applicationDTO.employmentType().getDbValue(),
+                applicationDTO.employmentLength(),
+                applicationDTO.monthlyIncome(),
+                applicationDTO.additionalIncome(),
+                applicationDTO.hasProperty(),
+                applicationDTO.hasCar(),
+                applicationDTO.existingCards(),
+                applicationDTO.existingLoans(),
+                applicationDTO.totalMonthlyDebt(),
+                applicationDTO.hasSalaryProject(),
+                applicationDTO.hasDeposit(),
+                applicationDTO.cardTypeRequested().getDbValue()
+        );
     }
 
 }

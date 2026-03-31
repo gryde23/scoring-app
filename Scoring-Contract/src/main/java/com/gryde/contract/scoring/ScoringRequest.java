@@ -3,7 +3,6 @@ package com.gryde.contract.scoring;
 import java.util.UUID;
 
 public record ScoringRequest(
-        UUID applicationId,
         Integer age,
         Character gender,
         String maritalStatus,
