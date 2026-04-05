@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -51,4 +52,7 @@ public class CreditAccount {
 
     @Column(name = "bank_name")
     private String bankName;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<PaymentHistory> payments;
 }
