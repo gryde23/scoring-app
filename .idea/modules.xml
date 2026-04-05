@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/application-orchestrator/scoring-app.application-orchestrator.main.iml" filepath="$PROJECT_DIR$/.idea/modules/application-orchestrator/scoring-app.application-orchestrator.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bureau-service/scoring-app.bureau-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bureau-service/scoring-app.bureau-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/scoring-service/scoring-app.scoring-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/scoring-service/scoring-app.scoring-service.main.iml" />
     </modules>
   </component>

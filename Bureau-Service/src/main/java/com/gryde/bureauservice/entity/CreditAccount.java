@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -34,10 +34,10 @@ public class CreditAccount {
     private AccountType accountType;
 
     @Column(name = "open_date", nullable = false)
-    private Date openDate;
+    private LocalDate openDate;
 
     @Column(name = "close_date")
-    private Date closeDate;
+    private LocalDate closeDate;
 
     @Column(name = "original_amount", nullable = false)
     private BigDecimal originalAmount;

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +23,7 @@ public class PaymentHistory {
     private UUID id;
 
     @Column(name = "due_date", nullable = false)
-    private Date dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "amount_due", nullable = false)
     private BigDecimal amountDue;
