@@ -5,12 +5,14 @@ spring:
   application:
     name: Application-Orchestrator
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/orchestrator_service
     username: postgres
     password: postgres
   jpa:
     hibernate:
       ddl-auto: validate
+  liquibase:
+    enabled: true
 
 services:
   scoring:

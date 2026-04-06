@@ -16,4 +16,13 @@ public class RestClientConfig {
                 .baseUrl(scoringBaseUrl)
                 .build();
     }
+
+    @Bean
+    public RestClient bureauRestClient(
+            @Value("${services.bureau.url}") String bureauBaseUrl
+    ) {
+        return RestClient.builder()
+                .baseUrl(bureauBaseUrl)
+                .build();
+    }
 }

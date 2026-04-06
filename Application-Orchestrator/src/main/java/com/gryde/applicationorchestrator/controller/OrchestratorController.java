@@ -24,6 +24,8 @@ public class OrchestratorController {
     public ResponseEntity<ScoringResponse> createApplication(
             @Valid @RequestBody ApplicationCreateRequest request
     ) {
+        Integer bureauScore = service.callBureau(request.userUUID());
+        System.out.println("BUREAU SCORE: " + bureauScore);
         ScoringResponse scoringResponse = service.callScoring(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(scoringResponse);

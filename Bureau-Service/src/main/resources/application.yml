@@ -1,0 +1,15 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: Bureau-Service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/bureau_service
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
