@@ -28,12 +28,12 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     List<Application> findApplicationsByUserPhone(
             @Param("userPhone") String userPhone);
 
-    @Query(
-            """
+
+    @Query("""
             select a from Application a
-            where a.user.email = :userEmail
-            """
-    )
-    List<Application> findApplicationsByUserEmail(
-            @Param("userEmail") String userEmail);
+            where a.user.id = :userId
+            and a.createdAt >= current_date - 60
+            """)
+    List<Application> findApplicationsByUserIdForLastTwoMonth(
+            @Param("userId") UUID userId);
 }

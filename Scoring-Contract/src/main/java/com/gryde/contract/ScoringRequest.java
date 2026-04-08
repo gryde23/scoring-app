@@ -1,4 +1,4 @@
-package com.gryde.contract.scoring;
+package com.gryde.contract;
 
 import java.util.UUID;
 

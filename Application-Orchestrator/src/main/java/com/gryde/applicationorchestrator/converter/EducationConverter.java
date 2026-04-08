@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.converter;
 
-import com.gryde.applicationorchestrator.enums.Education;
+import com.gryde.contract.enums.Education;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

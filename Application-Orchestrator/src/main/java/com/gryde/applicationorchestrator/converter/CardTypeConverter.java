@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.converter;
 
-import com.gryde.applicationorchestrator.enums.CardType;
+import com.gryde.contract.enums.CardType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

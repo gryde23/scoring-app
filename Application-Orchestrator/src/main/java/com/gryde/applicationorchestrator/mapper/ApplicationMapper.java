@@ -1,11 +1,11 @@
 package com.gryde.applicationorchestrator.mapper;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.applicationorchestrator.dto.ApplicationDTO;
+import com.gryde.contract.ApplicationDTO;
 import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.User;
-import com.gryde.applicationorchestrator.enums.ApplicationStatus;
-import com.gryde.contract.scoring.ScoringRequest;
+import com.gryde.contract.enums.ApplicationStatus;
+import com.gryde.contract.ScoringRequest;
 
 public final class ApplicationMapper {
 

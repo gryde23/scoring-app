@@ -12,9 +12,6 @@ public record UserResponse(
         @Pattern(regexp = "^(\\+|)(7|8)( |)\\d{3}( |)\\d{3}( |)(\\d{2}( |)){2}$")
         String phone,
 
-        @Email
-        String email,
-
         LocalDateTime createdAt
 ) {
 }

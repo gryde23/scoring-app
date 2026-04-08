@@ -1,8 +1,5 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum Region {
     MOSCOW("Москва"),
     SPB("Санкт-Петербург"),
@@ -22,5 +19,9 @@ public enum Region {
             }
         }
         throw new IllegalArgumentException("Unknown region: " + dbValue);
+    }
+
+    public String getDbValue() {
+        return dbValue;
     }
 }

@@ -21,13 +21,12 @@ public class UserService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserResponse createUser(CreateUserRequest request) {
-        if (request.email() == null && request.phone() == null) {
-            throw new IllegalArgumentException("Cannot create user with empty phone and email");
+        if (request.phone() == null) {
+            throw new IllegalArgumentException("Cannot create user with empty phone");
         }
 
         User entity = new User();
 
-        entity.setEmail(request.email());
         entity.setPhone(request.phone());
 
         User saved = userRepository.save(entity);
@@ -35,16 +34,11 @@ public class UserService {
         return userMapper.toUserResponse(saved);
     }
 
-    public UserResponse findUserByPhoneOrEmail(String phone, String email) {
+    public UserResponse findUserByPhone(String phone) {
         User user;
 
-        if (phone != null) {
-            user = userRepository.findUserByPhone(phone);
-            logger.info("Found user by phone: {}", user);
-        } else {
-            user = userRepository.findUserByEmail(email);
-            logger.info("Found user by email: {}", user);
-        }
+        user = userRepository.findUserByPhone(phone);
+        logger.info("Found user by phone: {}", user);
 
         return userMapper.toUserResponse(user);
     }

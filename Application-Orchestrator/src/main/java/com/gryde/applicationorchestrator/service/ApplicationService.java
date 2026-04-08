@@ -1,7 +1,7 @@
 package com.gryde.applicationorchestrator.service;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.applicationorchestrator.dto.ApplicationDTO;
+import com.gryde.contract.ApplicationDTO;
 import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.User;
 import com.gryde.applicationorchestrator.mapper.ApplicationMapper;
@@ -42,17 +42,18 @@ public class ApplicationService {
         return ApplicationMapper.toDTO(application);
     }
 
-    public List<ApplicationDTO> findUserApplicationsByPhoneOrEmail(String phone, String email) {
+    public List<ApplicationDTO> findUserApplicationsByPhone(String phone) {
         List<Application> userApplications;
 
-        if (phone != null) {
-            userApplications = applicationRepository.findApplicationsByUserPhone(phone);
-            logger.info("Found {} applications for user with phone {}", userApplications.size(), phone);
-        } else {
-            userApplications = applicationRepository.findApplicationsByUserEmail(email);
-            logger.info("Found {} applications for user with email {}", userApplications.size(), email);
-        }
+        userApplications = applicationRepository.findApplicationsByUserPhone(phone);
+        logger.info("Found {} applications for user with phone {}", userApplications.size(), phone);
 
         return userApplications.stream().map(ApplicationMapper::toDTO).toList();
+    }
+
+    public List<ApplicationDTO> findApplicationsByUserIdForLastTwoMonth(UUID userId) {
+        List<Application> applications = applicationRepository.findApplicationsByUserIdForLastTwoMonth(userId);
+
+        return applications.stream().map(ApplicationMapper::toDTO).toList();
     }
 }

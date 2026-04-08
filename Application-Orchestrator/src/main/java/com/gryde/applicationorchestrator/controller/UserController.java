@@ -22,26 +22,22 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody CreateUserRequest request) {
-        logger.info("CreateUserRequest with phone: {} email: {}", request.phone(), request.email());
+        logger.info("CreateUserRequest with phone: {}", request.phone());
         UserResponse response = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public ResponseEntity<UserResponse> getUserByPhoneOrEmail(
-            @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "email", required = false) String email
+            @RequestParam(name = "phone") String phone
     ) {
-        logger.info("Get user by phone: {} or email: {}", phone, email);
-        if (phone == null && email == null) {
-            throw new IllegalArgumentException("Phone or email must be provided");
+        logger.info("Get user by phone: {}", phone);
+        if (phone == null) {
+            throw new IllegalArgumentException("Phone must be provided");
         }
 
-        if (phone != null && email != null) {
-            throw new IllegalArgumentException("Only one parameter should be provided");
-        }
 
-        UserResponse response = userService.findUserByPhoneOrEmail(phone, email);
+        UserResponse response = userService.findUserByPhone(phone);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

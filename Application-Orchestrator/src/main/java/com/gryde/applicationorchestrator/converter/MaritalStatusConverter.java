@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.converter;
 
-import com.gryde.applicationorchestrator.enums.MaritalStatus;
+import com.gryde.contract.enums.MaritalStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

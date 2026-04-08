@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.converter;
 
-import com.gryde.applicationorchestrator.enums.Region;
+import com.gryde.contract.enums.Region;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

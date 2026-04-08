@@ -1,7 +1,7 @@
 package com.gryde.scoringservice;
 
-import com.gryde.contract.scoring.ScoringRequest;
-import com.gryde.contract.scoring.ScoringResponse;
+import com.gryde.contract.ScoringRequest;
+import com.gryde.contract.ScoringResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

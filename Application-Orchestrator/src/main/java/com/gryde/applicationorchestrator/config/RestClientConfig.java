@@ -25,4 +25,13 @@ public class RestClientConfig {
                 .baseUrl(bureauBaseUrl)
                 .build();
     }
+
+    @Bean
+    public RestClient antifraudRestClient(
+            @Value("${services.antifraud.url}") String antifraudBaseUrl
+    ) {
+        return RestClient.builder()
+                .baseUrl(antifraudBaseUrl)
+                .build();
+    }
 }

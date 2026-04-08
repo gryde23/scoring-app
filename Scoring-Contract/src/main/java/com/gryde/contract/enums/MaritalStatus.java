@@ -1,8 +1,5 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum MaritalStatus {
     WIDOWED("вдовец/вдова"),
     MARRIED("в браке"),
@@ -22,5 +19,9 @@ public enum MaritalStatus {
             }
         }
         throw new IllegalArgumentException("Unknown marital status: " + dbValue);
+    }
+
+    public String getDbValue() {
+        return dbValue;
     }
 }

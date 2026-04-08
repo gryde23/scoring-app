@@ -1,6 +1,6 @@
-package com.gryde.applicationorchestrator.dto;
+package com.gryde.contract;
 
-import com.gryde.applicationorchestrator.enums.*;
+import com.gryde.contract.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

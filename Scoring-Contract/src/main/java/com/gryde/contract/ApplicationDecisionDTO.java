@@ -1,6 +1,6 @@
-package com.gryde.applicationorchestrator.dto;
+package com.gryde.contract;
 
-import com.gryde.applicationorchestrator.enums.Decision;
+import com.gryde.contract.enums.Decision;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

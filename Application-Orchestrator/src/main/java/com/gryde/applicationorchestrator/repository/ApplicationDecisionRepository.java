@@ -1,5 +1,6 @@
 package com.gryde.applicationorchestrator.repository;
 
+import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.ApplicationDecision;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,13 +31,11 @@ public interface ApplicationDecisionRepository extends JpaRepository<Application
             @Param("userPhone") String userPhone
     );
 
-    @Query(
-            """
+    @Query("""
             select ad from ApplicationDecision ad
-            where ad.application.user.email = :userEmail
-            """
-    )
-    List<ApplicationDecision> findApplicationDecisionsByUserEmail(
-            @Param("userEmail") String userEmail
-    );
+            where ad.application.user.id = :userId
+            and ad.createdAt >= current_date - 60
+            """)
+    List<ApplicationDecision> findDecisionsByUserIdForLastTwoMonth(
+            @Param("userId") UUID userId);
 }

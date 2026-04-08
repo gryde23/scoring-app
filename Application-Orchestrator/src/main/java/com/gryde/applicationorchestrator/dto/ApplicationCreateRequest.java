@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.dto;
 
-import com.gryde.applicationorchestrator.enums.*;
+import com.gryde.contract.enums.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

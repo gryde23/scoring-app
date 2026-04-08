@@ -1,4 +1,4 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
 public enum Decision {
     APPROVED,

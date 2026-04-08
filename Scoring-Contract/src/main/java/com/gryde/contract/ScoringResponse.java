@@ -1,4 +1,4 @@
-package com.gryde.contract.scoring;
+package com.gryde.contract;
 
 import java.math.BigDecimal;
 import java.util.List;

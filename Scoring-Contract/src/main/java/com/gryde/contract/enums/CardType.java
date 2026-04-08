@@ -1,8 +1,5 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum CardType {
     GOLD("золотая"),
     PLATINUM("платиновая"),
@@ -21,5 +18,9 @@ public enum CardType {
             }
         }
         throw new IllegalArgumentException("Unknown card type: " + dbValue);
+    }
+
+    public String getDbValue() {
+        return dbValue;
     }
 }

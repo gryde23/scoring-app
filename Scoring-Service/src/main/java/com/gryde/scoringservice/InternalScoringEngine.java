@@ -1,6 +1,6 @@
 package com.gryde.scoringservice;
 
-import com.gryde.contract.scoring.ScoringRequest;
+import com.gryde.contract.ScoringRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

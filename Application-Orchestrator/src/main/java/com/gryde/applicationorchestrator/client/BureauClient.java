@@ -1,9 +1,6 @@
 package com.gryde.applicationorchestrator.client;
 
-import com.gryde.contract.scoring.ScoringRequest;
-import com.gryde.contract.scoring.ScoringResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 

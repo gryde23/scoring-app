@@ -1,8 +1,5 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum Education {
     HIGHER("высшее"),
     SECONDARY("среднее"),
@@ -22,5 +19,9 @@ public enum Education {
             }
         }
         throw new IllegalArgumentException("Unknown education type: " + dbValue);
+    }
+
+    public String getDbValue() {
+        return dbValue;
     }
 }

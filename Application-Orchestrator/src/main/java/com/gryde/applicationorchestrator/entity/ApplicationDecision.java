@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.entity;
 
-import com.gryde.applicationorchestrator.enums.Decision;
+import com.gryde.contract.enums.Decision;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

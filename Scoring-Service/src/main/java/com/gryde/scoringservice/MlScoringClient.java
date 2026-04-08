@@ -1,6 +1,6 @@
 package com.gryde.scoringservice;
 
-import com.gryde.contract.scoring.ScoringRequest;
+import com.gryde.contract.ScoringRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

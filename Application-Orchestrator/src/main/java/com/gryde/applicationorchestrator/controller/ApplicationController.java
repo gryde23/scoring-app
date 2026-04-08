@@ -1,7 +1,7 @@
 package com.gryde.applicationorchestrator.controller;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.applicationorchestrator.dto.ApplicationDTO;
+import com.gryde.contract.ApplicationDTO;
 import com.gryde.applicationorchestrator.service.ApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,21 +34,23 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ApplicationDTO>> getUserApplicationsByPhoneOrEmail(
-            @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "email", required = false) String email
+    public ResponseEntity<List<ApplicationDTO>> getUserApplicationsByPhone(
+            @RequestParam(name = "phone") String phone
     ) {
-        logger.info("Get user applications by phone: {} or email: {}", phone, email);
-        if (phone == null && email == null) {
-            throw new IllegalArgumentException("Phone or email must be provided");
-        }
+        logger.info("Get user applications by phone: {}", phone);
 
-        if (phone != null && email != null) {
-            throw new IllegalArgumentException("Only one parameter should be provided");
-        }
-
-        List<ApplicationDTO> applications = applicationService.findUserApplicationsByPhoneOrEmail(phone, email);
+        List<ApplicationDTO> applications = applicationService.findUserApplicationsByPhone(phone);
 
         return ResponseEntity.status(HttpStatus.OK).body(applications);
     }
+
+    @GetMapping("/antifraud/{id}")
+    public ResponseEntity<List<ApplicationDTO>> getLastTwoMonthApplications(
+            @PathVariable(name = "id") UUID userId
+            ) {
+        List<ApplicationDTO> applications = applicationService.findApplicationsByUserIdForLastTwoMonth(userId);
+
+        return ResponseEntity.ok(applications);
+    }
+
 }

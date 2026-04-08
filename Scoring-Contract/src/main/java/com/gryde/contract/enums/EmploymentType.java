@@ -1,8 +1,5 @@
-package com.gryde.applicationorchestrator.enums;
+package com.gryde.contract.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum EmploymentType {
     UNEMPLOYED("безработный"),
     BUSINESS("бизнес"),
@@ -23,5 +20,9 @@ public enum EmploymentType {
             }
         }
         throw new IllegalArgumentException("Unknown employment type: " + dbValue);
+    }
+
+    public String getDbValue() {
+        return dbValue;
     }
 }
