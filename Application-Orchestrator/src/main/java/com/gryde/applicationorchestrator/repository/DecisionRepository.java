@@ -1,41 +1,42 @@
 package com.gryde.applicationorchestrator.repository;
 
-import com.gryde.applicationorchestrator.entity.Application;
-import com.gryde.applicationorchestrator.entity.ApplicationDecision;
+import com.gryde.applicationorchestrator.entity.Decision;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public interface ApplicationDecisionRepository extends JpaRepository<ApplicationDecision, UUID> {
+public interface DecisionRepository extends JpaRepository<Decision, UUID> {
 
     @Query(
             """
-            select ad from ApplicationDecision ad
+            select ad from Decision ad
             where ad.application.user.id = :userId
             """
     )
-    List<ApplicationDecision> findApplicationDecisionsByUserId(
+    List<Decision> findApplicationDecisionsByUserId(
             @Param("userId") UUID userId
     );
 
     @Query(
             """
-            select ad from ApplicationDecision ad
+            select ad from Decision ad
             where ad.application.user.phone = :userPhone
             """
     )
-    List<ApplicationDecision> findApplicationDecisionsByUserPhone(
+    List<Decision> findApplicationDecisionsByUserPhone(
             @Param("userPhone") String userPhone
     );
 
     @Query("""
-            select ad from ApplicationDecision ad
+            select ad from Decision ad
             where ad.application.user.id = :userId
-            and ad.createdAt >= current_date - 60
+            and ad.createdAt >= :startDate
             """)
-    List<ApplicationDecision> findDecisionsByUserIdForLastTwoMonth(
-            @Param("userId") UUID userId);
+    List<Decision> findDecisionsByUserIdForLastMonth(
+            @Param("userId") UUID userId,
+            @Param("startDate") LocalDate startDate);
 }

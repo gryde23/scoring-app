@@ -1,6 +1,6 @@
 package com.gryde.contract.enums;
 
-public enum Decision {
+public enum FinalDecision {
     APPROVED,
     REJECTED,
     MANUAL_REVIEW

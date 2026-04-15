@@ -15,9 +15,6 @@ public record ScoringRequest(
         Integer additionalIncome,
         Boolean hasProperty,
         Boolean hasCar,
-        Integer existingCards,
-        Integer existingLoans,
-        Integer totalMonthlyDebt,
         Boolean hasSalaryProject,
         Boolean hasDeposit,
         String cardTypeRequested

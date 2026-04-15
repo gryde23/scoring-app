@@ -1,18 +1,17 @@
 package com.gryde.applicationorchestrator.controller;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.applicationorchestrator.dto.ServiceResponses;
 import com.gryde.applicationorchestrator.service.OrchestratorService;
-import com.gryde.contract.ApplicationDecisionDTO;
-import com.gryde.contract.ScoringResponse;
-import com.gryde.contract.enums.Decision;
+import com.gryde.contract.DecisionDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,23 +21,11 @@ public class OrchestratorController {
     private final OrchestratorService service;
 
     @PostMapping
-    public ResponseEntity<ApplicationDecisionDTO> createApplication(
-            @Valid @RequestBody ApplicationCreateRequest request
+    public ResponseEntity<DecisionDTO> createApplication(
+            @RequestBody ApplicationCreateRequest request,
+            Authentication authentication
     ) {
-        ServiceResponses responses = service.startScoring(request);
-        ApplicationDecisionDTO decisionDTO = new ApplicationDecisionDTO(
-                null,
-                responses.bureauScore(),
-                responses.scoringResponse().internalScore(),
-                responses.scoringResponse().mlDefaultProbability(),
-                responses.antifraudResponse().antifraudScore(),
-                responses.antifraudResponse().antifraudFlags(),
-                Decision.APPROVED,
-                responses.scoringResponse().recommendedLimit(),
-                responses.scoringResponse().scoringReasons(),
-                LocalDateTime.now(),
-                null
-        );
+        DecisionDTO decisionDTO = service.startScoring(request, UUID.randomUUID());
         return ResponseEntity.status(HttpStatus.OK).body(decisionDTO);
     }
 }

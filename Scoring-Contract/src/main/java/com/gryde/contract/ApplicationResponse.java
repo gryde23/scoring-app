@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-public record ApplicationDTO(
+public record ApplicationResponse(
         UUID id,
+        UUID userId,
         String fullName,
         Integer age,
-        char gender,
         MaritalStatus maritalStatus,
         Integer dependents,
         Education education,
@@ -19,17 +19,12 @@ public record ApplicationDTO(
         Integer employmentLength,
         Integer monthlyIncome,
         Integer additionalIncome,
-        boolean hasProperty,
-        boolean hasCar,
-        Integer existingCards,
-        Integer existingLoans,
-        Integer totalMonthlyDebt,
-        boolean hasSalaryProject,
-        boolean hasDeposit,
+        Boolean hasProperty,
+        Boolean hasCar,
+        Boolean hasSalaryProject,
+        Boolean hasDeposit,
         CardType cardTypeRequested,
         ApplicationStatus status,
-        LocalDateTime createdAt,
-        UUID userUUID,
-        UUID applicationDecisionUUID
+        LocalDateTime createdAt
 ) {
 }

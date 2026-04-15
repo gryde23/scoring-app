@@ -11,7 +11,5 @@ public interface CreditAccountMapper {
 
     CreditAccountDto toDto(CreditAccount entity);
 
-    CreditAccount toEntity(CreditAccountDto dto);
-
     List<CreditAccountDto> toDtoList(List<CreditAccount> entities);
 }

@@ -1,6 +1,6 @@
 package com.gryde.applicationorchestrator.entity;
 
-import com.gryde.contract.enums.Decision;
+import com.gryde.contract.enums.FinalDecision;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,10 +17,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ApplicationDecision {
+public class Decision {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @Column(name = "application_id", nullable = false)
+    private UUID applicationId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "application_id")
+    private Application application;
 
     @Column(name = "bureau_score")
     private Integer bureauScore;
@@ -40,7 +45,7 @@ public class ApplicationDecision {
 
     @Column(name = "final_decision", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Decision finalDecision;
+    private FinalDecision finalDecision;
 
     @Column(name = "approved_limit")
     private Integer approvedLimit;
@@ -51,10 +56,6 @@ public class ApplicationDecision {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @OneToOne
-    @JoinColumn(name = "application_id", nullable = false, unique = true)
-    private Application application;
 
     @PrePersist
     protected void onCreate() {

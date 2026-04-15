@@ -2,6 +2,7 @@ package com.gryde.bureauservice.controller;
 
 import com.gryde.bureauservice.service.BureauService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +15,12 @@ public class BureauController {
 
     private final BureauService bureauService;
 
-    @PostMapping
-    public ResponseEntity<String> setUserUUID(
-            @RequestParam(name = "userId") UUID userId,
-            @RequestParam(name = "phone") String phone) {
-        bureauService.setUserUUID(userId, phone);
-        return ResponseEntity.ok("Set user UUID in BKI");
-    }
-
     @GetMapping
     public ResponseEntity<Integer> calculateBureauScore(
             @RequestParam(name = "userId") UUID userId) {
+        if (bureauService.hasSelfBan(userId)) {
+            return ResponseEntity.ok(-1);
+        }
         Integer score = bureauService.calculateBureauScore(userId);
         return ResponseEntity.ok(score);
     }

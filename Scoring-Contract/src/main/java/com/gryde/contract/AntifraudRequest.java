@@ -3,7 +3,7 @@ package com.gryde.contract;
 import java.util.List;
 
 public record AntifraudRequest(
-        List<ApplicationDTO> applications,
-        List<ApplicationDecisionDTO> decisions
+        List<ApplicationResponse> applications,
+        List<DecisionDTO> decisions
 ) {
 }

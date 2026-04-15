@@ -1,17 +1,18 @@
 package com.gryde.applicationorchestrator.service;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.contract.ApplicationDTO;
 import com.gryde.applicationorchestrator.entity.Application;
-import com.gryde.applicationorchestrator.entity.User;
 import com.gryde.applicationorchestrator.mapper.ApplicationMapper;
 import com.gryde.applicationorchestrator.repository.ApplicationRepository;
-import com.gryde.applicationorchestrator.repository.UserRepository;
+import com.gryde.contract.ApplicationResponse;
+import com.gryde.contract.enums.ApplicationStatus;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -20,40 +21,41 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApplicationService {
 
-    private final UserRepository userRepository;
+
     private final ApplicationRepository applicationRepository;
+    private final ApplicationMapper applicationMapper;
     private final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
 
-    public ApplicationDTO createApplication(ApplicationCreateRequest request) {
-        User user = userRepository.findById(request.userUUID()).
-                orElseThrow(() -> new NoSuchElementException("User with UUID: " + request.userUUID() + " not found"));
+    @Transactional
+    public ApplicationResponse createApplication(ApplicationCreateRequest request, UUID userId) {
 
-        Application application = ApplicationMapper.toEntity(request, user);
+        Application application = applicationMapper.toEntity(request, userId);
 
         Application saved = applicationRepository.save(application);
         logger.info("Saved application with UUID: {}", saved.getId());
-        return ApplicationMapper.toDTO(saved);
+        return applicationMapper.toResponse(saved);
     }
 
-    public ApplicationDTO findApplicationById(UUID uuid) {
+    public ApplicationResponse findApplicationById(UUID uuid) {
         Application application = applicationRepository.findById(uuid).
                 orElseThrow(() -> new NoSuchElementException("Application with UUID: " + uuid + " not found"));
 
-        return ApplicationMapper.toDTO(application);
+        return applicationMapper.toResponse(application);
     }
 
-    public List<ApplicationDTO> findUserApplicationsByPhone(String phone) {
-        List<Application> userApplications;
+    public List<ApplicationResponse> findApplicationsByUserIdForLastMonth(UUID userId) {
+        LocalDate startDate = LocalDate.now().minusDays(30);
+        List<Application> applications = applicationRepository.findApplicationsByUserIdForLastMonth(userId, startDate);
 
-        userApplications = applicationRepository.findApplicationsByUserPhone(phone);
-        logger.info("Found {} applications for user with phone {}", userApplications.size(), phone);
-
-        return userApplications.stream().map(ApplicationMapper::toDTO).toList();
+        return applications.stream().map(applicationMapper::toResponse).toList();
     }
 
-    public List<ApplicationDTO> findApplicationsByUserIdForLastTwoMonth(UUID userId) {
-        List<Application> applications = applicationRepository.findApplicationsByUserIdForLastTwoMonth(userId);
+    @Transactional
+    public void updateStatus(UUID uuid, ApplicationStatus status) {
+        Application application = applicationRepository.findById(uuid).
+                orElseThrow(() -> new NoSuchElementException("Application with UUID: " + uuid + " not found"));
 
-        return applications.stream().map(ApplicationMapper::toDTO).toList();
+        application.setStatus(status);
+        applicationRepository.save(application);
     }
 }

@@ -13,8 +13,5 @@ public interface PaymentHistoryMapper {
     @Mapping(target = "accountId", source = "account.id")
     PaymentHistoryDto toDto(PaymentHistory entity);
 
-    @Mapping(target = "account", ignore = true)
-    PaymentHistory toEntity(PaymentHistoryDto dto);
-
     List<PaymentHistoryDto> toDtoList(List<PaymentHistory> entities);
 }
