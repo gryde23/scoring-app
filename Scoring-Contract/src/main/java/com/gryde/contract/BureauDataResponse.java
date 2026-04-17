@@ -18,6 +18,7 @@ public record BureauDataResponse(
         Integer totalPayments,
         Integer dpd30,
         Integer dpd60,
+        Integer dpd90,
         Integer dpd90Plus,
         Integer maxDaysOverdue,
 
@@ -26,7 +27,6 @@ public record BureauDataResponse(
         Integer recentOverdueCount,
 
         BigDecimal monthlyDebtPayment,
-        BigDecimal debtToIncome,
 
         Integer bureauScore
 ) {

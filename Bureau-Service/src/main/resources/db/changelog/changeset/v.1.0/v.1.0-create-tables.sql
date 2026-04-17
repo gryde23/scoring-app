@@ -6,6 +6,7 @@ create table credit_accounts(
                                   close_date date check(close_date > open_date),
                                   original_amount decimal(12,2) check(original_amount > 0) not null,
                                   current_balance decimal(12,2) check(current_balance >= 0 and current_balance <= original_amount) not null,
+                                  monthly_payment decimal(10,2) check (monthly_payment >= 0) not null,
                                   status varchar(20) check(status in ('ACTIVE', 'CLOSED', 'DEFAULT', 'RESTRUCTURED')) not null,
                                   bank_name varchar(100)
   );

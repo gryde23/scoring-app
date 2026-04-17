@@ -14,26 +14,17 @@ public interface DecisionRepository extends JpaRepository<Decision, UUID> {
     @Query(
             """
             select ad from Decision ad
-            where ad.application.user.id = :userId
+            where ad.application.userUUID = :userId
             """
     )
     List<Decision> findApplicationDecisionsByUserId(
             @Param("userId") UUID userId
     );
 
-    @Query(
-            """
-            select ad from Decision ad
-            where ad.application.user.phone = :userPhone
-            """
-    )
-    List<Decision> findApplicationDecisionsByUserPhone(
-            @Param("userPhone") String userPhone
-    );
 
     @Query("""
             select ad from Decision ad
-            where ad.application.user.id = :userId
+            where ad.application.userUUID = :userId
             and ad.createdAt >= :startDate
             """)
     List<Decision> findDecisionsByUserIdForLastMonth(

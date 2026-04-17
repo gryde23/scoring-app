@@ -24,11 +24,8 @@ public class CreditAccount {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
-
-    @Column(name = "phone", nullable = false)
-    private String phone;
 
     @Column(name = "account_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -45,6 +42,9 @@ public class CreditAccount {
 
     @Column(name = "current_balance", nullable = false)
     private BigDecimal currentBalance;
+
+    @Column(name = "monthly_payment", nullable = false)
+    private BigDecimal monthlyPayment;
 
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)

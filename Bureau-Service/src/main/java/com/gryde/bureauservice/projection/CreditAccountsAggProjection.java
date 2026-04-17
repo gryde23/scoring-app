@@ -12,5 +12,6 @@ public interface CreditAccountsAggProjection {
     Integer getCreditHistoryDays();
     BigDecimal getTotalCreditLimit();
     BigDecimal getTotalActiveDebt();
+    BigDecimal getMonthlyDebtPayment();
     BigDecimal getUtilizationRatio();
 }

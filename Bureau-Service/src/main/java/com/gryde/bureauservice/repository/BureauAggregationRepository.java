@@ -23,15 +23,26 @@ public interface BureauAggregationRepository extends Repository<CreditAccount, U
 
             COALESCE(SUM(ca.original_amount) FILTER (WHERE ca.status = 'ACTIVE'), 0) AS totalCreditLimit,
             COALESCE(SUM(ca.current_balance) FILTER (WHERE ca.status = 'ACTIVE'), 0) AS totalActiveDebt,
+            COALESCE(SUM(ca.monthly_payment) FILTER (WHERE ca.status = 'ACTIVE'), 0) AS monthlyDebtPayment,
 
             ROUND(
-                COALESCE(
-                    SUM(ca.current_balance) FILTER (WHERE ca.status = 'ACTIVE')
-                    / NULLIF(SUM(ca.original_amount) FILTER (WHERE ca.status = 'ACTIVE'), 0),
-                    0
-                ),
-                4
-            ) AS utilizationRatio
+                    COALESCE(
+                        SUM(ca.current_balance) FILTER (
+                            WHERE ca.account_type = 'CREDIT_CARD'
+                              AND ca.status = 'ACTIVE'
+                        )
+                        /
+                        NULLIF(
+                            SUM(ca.original_amount) FILTER (
+                                WHERE ca.account_type = 'CREDIT_CARD'
+                                  AND ca.status = 'ACTIVE'
+                            ),
+                            0
+                        ),
+                        0
+                    ),
+                    4
+                ) AS utilization_ratio
 
         FROM credit_accounts ca
         WHERE ca.user_id = :userId
@@ -43,9 +54,10 @@ public interface BureauAggregationRepository extends Repository<CreditAccount, U
         SELECT
             COUNT(ph.id) AS totalPayments,
 
-            COUNT(ph.id) FILTER (WHERE ph.days_overdue BETWEEN 30 AND 59) AS dpd30,
-            COUNT(ph.id) FILTER (WHERE ph.days_overdue BETWEEN 60 AND 89) AS dpd60,
-            COUNT(ph.id) FILTER (WHERE ph.days_overdue >= 90) AS dpd90Plus,
+            COUNT(ph.id) FILTER (WHERE ph.days_overdue BETWEEN 1 AND 30) AS dpd30,
+            COUNT(ph.id) FILTER (WHERE ph.days_overdue BETWEEN 31 AND 60) AS dpd60,
+            COUNT(ph.id) FILTER (WHERE ph.days_overdue BETWEEN 61 AND 90) AS dpd90,
+            COUNT(ph.id) FILTER (WHERE ph.days_overdue > 90) AS dpd90Plus,
 
             COALESCE(MAX(ph.days_overdue), 0) AS maxDaysOverdue,
 

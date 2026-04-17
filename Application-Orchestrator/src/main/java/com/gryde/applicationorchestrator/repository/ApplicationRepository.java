@@ -14,25 +14,16 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     @Query(
             """
             select a from Application a
-            where a.user.id = :userId
+            where a.userUUID = :userId
             """
     )
     List<Application> findApplicationsByUserId(
            @Param("userId") UUID userId);
 
-    @Query(
-            """
-            select a from Application a
-            where a.user.phone = :userPhone
-            """
-    )
-    List<Application> findApplicationsByUserPhone(
-            @Param("userPhone") String userPhone);
-
 
     @Query("""
             select a from Application a
-            where a.user.id = :userId
+            where a.userUUID = :userId
             and a.createdAt >= :startDate
             """)
     List<Application> findApplicationsByUserIdForLastMonth(

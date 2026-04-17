@@ -6,6 +6,7 @@ public interface PaymentHistoryAggProjection {
     Integer getTotalPayments();
     Integer getDpd30();
     Integer getDpd60();
+    Integer getDpd90();
     Integer getDpd90Plus();
     Integer getMaxDaysOverdue();
     BigDecimal getPaymentRatio();
