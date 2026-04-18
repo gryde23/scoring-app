@@ -60,6 +60,9 @@ public class BureauSnapshot {
     @Column(name = "dpd60", nullable = false)
     private Integer dpd60;
 
+    @Column(name = "dpd90", nullable = false)
+    private Integer dpd90;
+
     @Column(name = "dpd90_plus", nullable = false)
     private Integer dpd90Plus;
 
@@ -86,4 +89,9 @@ public class BureauSnapshot {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

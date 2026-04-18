@@ -67,6 +67,7 @@ public class Application {
     private boolean hasDeposit;
 
     @Column(name = "card_type_requested", nullable = false)
+    @Enumerated(EnumType.STRING)
     private CardType cardTypeRequested;
 
     @Column(name = "status", nullable = false)

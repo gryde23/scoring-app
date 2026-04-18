@@ -55,6 +55,7 @@ create table application_bureau_snapshot (
     total_payments integer not null check (total_payments >= 0),
     dpd30 integer not null check (dpd30 >= 0),
     dpd60 integer not null check (dpd60 >= 0),
+    dpd90 integer not null check (dpd90 >= 0),
     dpd90_plus integer not null check (dpd90_plus >= 0),
     max_days_overdue integer not null check (max_days_overdue >= 0),
 

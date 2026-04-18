@@ -12,9 +12,4 @@ public interface BureauSnapshotMapper {
     @Mapping(target = "application", source = "application")
     @Mapping(target = "createdAt", ignore = true)
     BureauSnapshot toEntity(Application application, BureauDataResponse dto);
-
-    @AfterMapping
-    default void linkApplication(@MappingTarget BureauSnapshot snapshot, Application application) {
-        snapshot.setApplication(application);
-    }
 }

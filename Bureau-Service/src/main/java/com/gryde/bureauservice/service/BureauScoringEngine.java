@@ -2,8 +2,6 @@ package com.gryde.bureauservice.service;
 
 import com.gryde.bureauservice.projection.CreditAccountsAggProjection;
 import com.gryde.bureauservice.projection.PaymentHistoryAggProjection;
-import com.gryde.bureauservice.repository.BureauAggregationRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component

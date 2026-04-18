@@ -1,10 +1,9 @@
 package com.gryde.contract;
 
-import java.util.UUID;
+import java.math.BigDecimal;
 
 public record ScoringRequest(
         Integer age,
-        Character gender,
         String maritalStatus,
         Integer dependents,
         String education,
@@ -17,5 +16,29 @@ public record ScoringRequest(
         Boolean hasCar,
         Boolean hasSalaryProject,
         Boolean hasDeposit,
-        String cardTypeRequested
+        String cardTypeRequested,
+
+        Integer totalAccounts,
+        Integer activeAccounts,
+        Integer closedAccounts,
+        Integer defaultAccounts,
+        Integer restructuredAccounts,
+
+        Integer creditHistoryDays,
+        BigDecimal totalCreditLimit,
+        BigDecimal totalActiveDebt,
+        BigDecimal utilizationRatio,
+
+        Integer totalPayments,
+        Integer dpd30,
+        Integer dpd60,
+        Integer dpd90,
+        Integer dpd90Plus,
+        Integer maxDaysOverdue,
+
+        BigDecimal paymentRatio,
+        Integer partialPaymentsCount,
+        Integer recentOverdueCount,
+
+        BigDecimal monthlyDebtPayment
 ) {}

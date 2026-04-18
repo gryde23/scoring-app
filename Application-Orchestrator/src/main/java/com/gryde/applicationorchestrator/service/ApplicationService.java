@@ -30,6 +30,7 @@ public class ApplicationService {
     public ApplicationResponse createApplication(ApplicationCreateRequest request, UUID userId) {
 
         Application application = applicationMapper.toEntity(request, userId);
+        application.setStatus(ApplicationStatus.IN_PROGRESS);
 
         Application saved = applicationRepository.save(application);
         logger.info("Saved application with UUID: {}", saved.getId());
