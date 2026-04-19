@@ -1,4 +1,4 @@
-package com.gryde.antifrodservice;
+package com.gryde.antifraudservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

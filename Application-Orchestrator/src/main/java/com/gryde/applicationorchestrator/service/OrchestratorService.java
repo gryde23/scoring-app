@@ -4,14 +4,11 @@ import com.gryde.applicationorchestrator.client.AntifraudClient;
 import com.gryde.applicationorchestrator.client.BureauClient;
 import com.gryde.applicationorchestrator.client.ScoringClient;
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
-import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.contract.*;
-import com.gryde.applicationorchestrator.mapper.ApplicationMapper;
 import com.gryde.contract.enums.ApplicationStatus;
 import com.gryde.contract.enums.FinalDecision;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +25,7 @@ public class OrchestratorService {
     private final BureauClient bureauClient;
     private final AntifraudClient antifraudClient;
 
-    public ScoringResponse callInternalScoring(ApplicationCreateRequest request, BureauDataResponse bureauData) {
+    public ScoringResponse callInternalScoring(ApplicationCreateRequest request, BureauSnapshotResponse bureauData) {
         ScoringRequest scoringRequest = new ScoringRequest(
                 request.age(),
                 request.maritalStatus().name().toLowerCase(),
@@ -68,18 +65,18 @@ public class OrchestratorService {
         return scoringClient.calculate(scoringRequest);
     }
 
-    public BureauDataResponse callBureau(UUID userId, ApplicationResponse application) {
-        BureauDataResponse bureauResponse = bureauClient.calculate(userId);
+    public BureauSnapshotResponse callBureau(UUID userId, ApplicationResponse application) {
+        BureauSnapshotResponse bureauResponse = bureauClient.calculate(userId);
         bureauSnapshotService.saveSnapshot(application.id(), bureauResponse);
 
         return bureauResponse;
     }
 
-    public AntifraudResponse callAntifraudCheck(UUID userId) {
-        List<ApplicationResponse> applications = applicationService.findApplicationsByUserIdForLastMonth(userId);
+    public AntifraudResponse callAntifraudCheck(UUID userId, BureauSnapshotResponse bureauSnapshot, ApplicationResponse newApplication) {
+        List<ApplicationResponse> applications = applicationService.findCompletedApplicationsByUserIdForLastMonth(userId);
         List<DecisionDTO> decisions = applicationDecisionService.findDecisionsByUserIdForLastMonth(userId);
 
-        return antifraudClient.antifraudCheck(new AntifraudRequest(applications, decisions));
+        return antifraudClient.antifraudCheck(new AntifraudRequest(newApplication, applications, decisions, bureauSnapshot));
     }
 
 
@@ -87,9 +84,10 @@ public class OrchestratorService {
         ApplicationResponse application = applicationService.createApplication(request, userId);
 
         try {
-            BureauDataResponse bureauResponse = callBureau(userId, application);
+            BureauSnapshotResponse bureauResponse = callBureau(userId, application);
+            AntifraudResponse antifraudResponse = callAntifraudCheck(userId, bureauResponse, application);
             ScoringResponse scoringResponse = callInternalScoring(request, bureauResponse);
-            AntifraudResponse antifraudResponse = callAntifraudCheck(userId);
+
 
             FinalDecision finalDecision = decisionEngine.decide(scoringResponse, bureauResponse.bureauScore(), antifraudResponse);
 

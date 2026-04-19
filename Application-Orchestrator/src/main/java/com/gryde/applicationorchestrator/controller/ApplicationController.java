@@ -20,16 +20,4 @@ public class ApplicationController {
     private final ApplicationService applicationService;
     private final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
 
-//    @GetMapping
-//    public ResponseEntity<List<ApplicationResponse>> getUserApplicationsByPhone(
-//            @RequestParam(name = "phone") String phone
-//    ) {
-//        logger.info("Get user applications by phone: {}", phone);
-//
-//        List<ApplicationResponse> applications = applicationService.findUserApplic(phone);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(applications);
-//    }
-
-
 }

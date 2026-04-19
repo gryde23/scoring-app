@@ -1,4 +1,4 @@
-package com.gryde.antifrodservice;
+package com.gryde.antifraudservice;
 
 import com.gryde.contract.AntifraudRequest;
 import com.gryde.contract.AntifraudResponse;

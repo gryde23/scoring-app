@@ -10,7 +10,7 @@ import com.gryde.bureauservice.projection.CreditAccountsAggProjection;
 import com.gryde.bureauservice.projection.PaymentHistoryAggProjection;
 import com.gryde.bureauservice.repository.BureauAggregationRepository;
 import com.gryde.bureauservice.repository.SelfBanDao;
-import com.gryde.contract.BureauDataResponse;
+import com.gryde.contract.BureauSnapshotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +30,14 @@ public class BureauService {
         return selfBanDao.isBanned(userId);
     }
 
-    public BureauDataResponse collectBureauData(UUID userId) {
+    public BureauSnapshotResponse collectBureauData(UUID userId) {
 
         CreditAccountsAggProjection accounts = repository.getAccountsAgg(userId);
         PaymentHistoryAggProjection payments = repository.getPaymentsAgg(userId);
 
         int score = scoringEngine.calculateBureauScore(accounts, payments);
 
-        return new BureauDataResponse(
+        return new BureauSnapshotResponse(
                 nullToZero(accounts.getTotalAccounts()),
                 nullToZero(accounts.getActiveAccounts()),
                 nullToZero(accounts.getClosedAccounts()),

@@ -25,6 +25,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             select a from Application a
             where a.userUUID = :userId
             and a.createdAt >= :startDate
+            and a.status <> 'IN_PROGRESS'
             """)
     List<Application> findApplicationsByUserIdForLastMonth(
             @Param("userId") UUID userId,

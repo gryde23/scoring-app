@@ -1,9 +1,8 @@
 package com.gryde.contract;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-public record BureauDataResponse(
+public record BureauSnapshotResponse(
         Integer totalAccounts,
         Integer activeAccounts,
         Integer closedAccounts,

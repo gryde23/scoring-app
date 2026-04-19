@@ -44,7 +44,7 @@ public class ApplicationService {
         return applicationMapper.toResponse(application);
     }
 
-    public List<ApplicationResponse> findApplicationsByUserIdForLastMonth(UUID userId) {
+    public List<ApplicationResponse> findCompletedApplicationsByUserIdForLastMonth(UUID userId) {
         LocalDate startDate = LocalDate.now().minusDays(30);
         List<Application> applications = applicationRepository.findApplicationsByUserIdForLastMonth(userId, startDate);
 
