@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -45,7 +45,7 @@ public class ApplicationService {
     }
 
     public List<ApplicationResponse> findCompletedApplicationsByUserIdForLastMonth(UUID userId) {
-        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
         List<Application> applications = applicationRepository.findApplicationsByUserIdForLastMonth(userId, startDate);
 
         return applications.stream().map(applicationMapper::toResponse).toList();

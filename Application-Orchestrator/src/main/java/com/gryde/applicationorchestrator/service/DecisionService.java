@@ -9,11 +9,12 @@ import com.gryde.applicationorchestrator.repository.DecisionRepository;
 import com.gryde.contract.AntifraudResponse;
 import com.gryde.contract.DecisionDTO;
 import com.gryde.contract.ScoringResponse;
+import com.gryde.contract.enums.FinalDecision;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class DecisionService {
     private final DecisionMapper decisionMapper;
 
     public List<DecisionDTO> findDecisionsByUserIdForLastMonth(UUID userId) {
-        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
         return decisionMapper.toDtoList(decisionRepository.findDecisionsByUserIdForLastMonth(userId, startDate));
     }
 
@@ -50,6 +51,30 @@ public class DecisionService {
         decision.setFinalDecision(decisionResult.finalDecision());
         decision.setDecisionReasons(decisionResult.decisionReasons());
         decision.setApprovedLimit(decisionResult.approvedLimit());
+
+        Decision saved = decisionRepository.save(decision);
+        return decisionMapper.toDto(saved);
+    }
+
+    public DecisionDTO saveEarlyRejection(
+            UUID applicationId,
+            Integer bureauScore,
+            AntifraudResponse antifraud,
+            List<String> decisionReasons
+    ) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new EntityNotFoundException("Application not found: " + applicationId));
+
+        Decision decision = new Decision();
+        decision.setApplication(application);
+        decision.setInternalScore(0);
+        decision.setMlDefaultProbability(null);
+        decision.setBureauScore(bureauScore);
+        decision.setAntifraudScore(antifraud == null ? null : antifraud.antifraudScore());
+        decision.setAntifraudFlags(antifraud == null ? List.of() : antifraud.antifraudFlags());
+        decision.setFinalDecision(FinalDecision.REJECTED);
+        decision.setDecisionReasons(decisionReasons);
+        decision.setApprovedLimit(null);
 
         Decision saved = decisionRepository.save(decision);
         return decisionMapper.toDto(saved);

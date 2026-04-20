@@ -6,7 +6,7 @@ CREATE TABLE applications(
     marital_status varchar(10) not null check (marital_status in ('WIDOWED', 'MARRIED', 'SINGLE', 'DIVORCED')),
     dependents integer check(dependents >= 0),
     education varchar(20) not null check (education in ('HIGHER', 'SECONDARY', 'SECONDARY_SPECIAL', 'PHD')),
-    region varchar(50) not null check (region in ('MOSCOW', 'SAINT_PETERSBURG', 'REGIONAL_CENTER', 'OTHER_CITY')),
+    region varchar(50) not null check (region in ('MOSCOW', 'SAINT_PETERSBURG', 'REGIONAL_CENTER', 'OTHER')),
     employment_type varchar(20) not null check (employment_type in ('UNEMPLOYED', 'BUSINESS', 'PENSIONER', 'EMPLOYEE', 'SELF_EMPLOYED')),
     employment_length integer check(employment_length >= 0),
     monthly_income integer not null check (monthly_income >= 0),

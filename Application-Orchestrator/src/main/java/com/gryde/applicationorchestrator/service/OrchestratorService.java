@@ -10,12 +10,15 @@ import com.gryde.contract.enums.ApplicationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrchestratorService {
+    private static final int EARLY_REJECT_ANTIFRAUD_SCORE = 500;
 
     private final ApplicationService applicationService;
     private final DecisionService applicationDecisionService;
@@ -26,6 +29,8 @@ public class OrchestratorService {
     private final AntifraudClient antifraudClient;
 
     public ScoringResponse callInternalScoring(ApplicationCreateRequest request, BureauSnapshotResponse bureauData) {
+        BigDecimal totalIncome = BigDecimal.valueOf(request.monthlyIncome() + request.additionalIncome());
+        BigDecimal debtToIncome = totalIncome.divide(totalIncome, 4, RoundingMode.HALF_UP);
         ScoringRequest scoringRequest = new ScoringRequest(
                 request.age(),
                 request.maritalStatus().name().toLowerCase(),
@@ -59,7 +64,8 @@ public class OrchestratorService {
                 bureauData.paymentRatio(),
                 bureauData.partialPaymentsCount(),
                 bureauData.recentOverdueCount(),
-                bureauData.monthlyDebtPayment()
+                bureauData.monthlyDebtPayment(),
+                debtToIncome
         );
 
         return scoringClient.calculate(scoringRequest);
@@ -87,8 +93,30 @@ public class OrchestratorService {
 
         try {
             BureauResultResponse bureauResponse = callBureau(userId, application);
+            if (bureauResponse.selfBanned()) {
+                DecisionDTO decision = applicationDecisionService.saveEarlyRejection(
+                        application.id(),
+                        null,
+                        null,
+                        List.of("Установлен самозапрет на кредитование")
+                );
+                applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
+                return decision;
+            }
+
             BureauSnapshotResponse bureauData = bureauResponse.bureauData();
             AntifraudResponse antifraudResponse = callAntifraudCheck(userId, bureauData, application);
+            if (antifraudResponse.antifraudScore() > EARLY_REJECT_ANTIFRAUD_SCORE) {
+                DecisionDTO decision = applicationDecisionService.saveEarlyRejection(
+                        application.id(),
+                        bureauData.bureauScore(),
+                        antifraudResponse,
+                        List.of("Подозрительная заявка")
+                );
+                applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
+                return decision;
+            }
+
             ScoringResponse scoringResponse = callInternalScoring(request, bureauData);
 
 

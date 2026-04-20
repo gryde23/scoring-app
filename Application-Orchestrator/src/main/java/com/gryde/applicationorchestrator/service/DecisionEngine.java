@@ -76,7 +76,7 @@ public class DecisionEngine {
             decisionReasons.add("Риск дефолта выше 10%");
         }
 
-        if (antifraudScore >= HIGH_ANTIFRAUD_SCORE) {
+        if (antifraudScore > HIGH_ANTIFRAUD_SCORE) {
             decisionReasons.add("Высокий антифрод риск");
         }
 

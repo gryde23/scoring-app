@@ -40,5 +40,6 @@ public record ScoringRequest(
         Integer partialPaymentsCount,
         Integer recentOverdueCount,
 
-        BigDecimal monthlyDebtPayment
+        BigDecimal monthlyDebtPayment,
+        BigDecimal debtToIncome
 ) {}
