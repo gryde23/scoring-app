@@ -2,13 +2,13 @@ package com.gryde.applicationorchestrator.service;
 
 import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.Decision;
+import com.gryde.applicationorchestrator.dto.DecisionResult;
 import com.gryde.applicationorchestrator.mapper.DecisionMapper;
 import com.gryde.applicationorchestrator.repository.ApplicationRepository;
 import com.gryde.applicationorchestrator.repository.DecisionRepository;
 import com.gryde.contract.AntifraudResponse;
 import com.gryde.contract.DecisionDTO;
 import com.gryde.contract.ScoringResponse;
-import com.gryde.contract.enums.FinalDecision;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class DecisionService {
             ScoringResponse scoring,
             Integer bureauScore,
             AntifraudResponse antifraud,
-            FinalDecision finalDecision
+            DecisionResult decisionResult
     ) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new EntityNotFoundException("Application not found: " + applicationId));
@@ -47,14 +47,9 @@ public class DecisionService {
         decision.setBureauScore(bureauScore);
         decision.setAntifraudScore(antifraud.antifraudScore());
         decision.setAntifraudFlags(antifraud.antifraudFlags());
-        decision.setFinalDecision(finalDecision);
-        decision.setDecisionReasons(scoring.scoringReasons());
-
-        if (finalDecision == FinalDecision.APPROVED) {
-            decision.setApprovedLimit(scoring.recommendedLimit());
-        } else {
-            decision.setApprovedLimit(null);
-        }
+        decision.setFinalDecision(decisionResult.finalDecision());
+        decision.setDecisionReasons(decisionResult.decisionReasons());
+        decision.setApprovedLimit(decisionResult.approvedLimit());
 
         Decision saved = decisionRepository.save(decision);
         return decisionMapper.toDto(saved);

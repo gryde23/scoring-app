@@ -4,9 +4,9 @@ import com.gryde.applicationorchestrator.client.AntifraudClient;
 import com.gryde.applicationorchestrator.client.BureauClient;
 import com.gryde.applicationorchestrator.client.ScoringClient;
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
+import com.gryde.applicationorchestrator.dto.DecisionResult;
 import com.gryde.contract.*;
 import com.gryde.contract.enums.ApplicationStatus;
-import com.gryde.contract.enums.FinalDecision;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +65,11 @@ public class OrchestratorService {
         return scoringClient.calculate(scoringRequest);
     }
 
-    public BureauSnapshotResponse callBureau(UUID userId, ApplicationResponse application) {
-        BureauSnapshotResponse bureauResponse = bureauClient.calculate(userId);
-        bureauSnapshotService.saveSnapshot(application.id(), bureauResponse);
+    public BureauResultResponse callBureau(UUID userId, ApplicationResponse application) {
+        BureauResultResponse bureauResponse = bureauClient.calculate(userId);
+        if (bureauResponse.bureauData() != null) {
+            bureauSnapshotService.saveSnapshot(application.id(), bureauResponse.bureauData());
+        }
 
         return bureauResponse;
     }
@@ -84,15 +86,16 @@ public class OrchestratorService {
         ApplicationResponse application = applicationService.createApplication(request, userId);
 
         try {
-            BureauSnapshotResponse bureauResponse = callBureau(userId, application);
-            AntifraudResponse antifraudResponse = callAntifraudCheck(userId, bureauResponse, application);
-            ScoringResponse scoringResponse = callInternalScoring(request, bureauResponse);
+            BureauResultResponse bureauResponse = callBureau(userId, application);
+            BureauSnapshotResponse bureauData = bureauResponse.bureauData();
+            AntifraudResponse antifraudResponse = callAntifraudCheck(userId, bureauData, application);
+            ScoringResponse scoringResponse = callInternalScoring(request, bureauData);
 
 
-            FinalDecision finalDecision = decisionEngine.decide(scoringResponse, bureauResponse.bureauScore(), antifraudResponse);
+            DecisionResult decisionResult = decisionEngine.decide(scoringResponse, bureauData.bureauScore(), antifraudResponse);
 
             DecisionDTO decision = applicationDecisionService.save(
-                    application.id(), scoringResponse, bureauResponse.bureauScore(), antifraudResponse, finalDecision
+                    application.id(), scoringResponse, bureauData.bureauScore(), antifraudResponse, decisionResult
             );
             applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
 

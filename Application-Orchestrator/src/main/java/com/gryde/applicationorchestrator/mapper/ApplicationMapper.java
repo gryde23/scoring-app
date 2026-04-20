@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ApplicationMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "userUUID", source = "userId")
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
 
@@ -22,5 +22,6 @@ public interface ApplicationMapper {
     @Mapping(target = "bureauSnapshot", ignore = true)
     Application toEntity(ApplicationCreateRequest request, UUID userId);
 
+    @Mapping(target = "userId", source = "userUUID")
     ApplicationResponse toResponse(Application application);
 }

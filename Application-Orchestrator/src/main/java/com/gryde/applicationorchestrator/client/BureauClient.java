@@ -1,5 +1,6 @@
 package com.gryde.applicationorchestrator.client;
 
+import com.gryde.contract.BureauResultResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,12 @@ public class BureauClient {
         this.bureauRestClient = scoringRestClient;
     }
 
-    public BureauSnapshotResponse calculate(UUID userId) {
+    public BureauResultResponse calculate(UUID userId) {
         return bureauRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/internal/bureau")
                         .queryParam("userId", userId)
                         .build())
                 .retrieve()
-                .body(BureauSnapshotResponse.class);
+                .body(BureauResultResponse.class);
     }
 }

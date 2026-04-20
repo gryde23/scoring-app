@@ -1,6 +1,7 @@
 package com.gryde.bureauservice.controller;
 
 import com.gryde.bureauservice.service.BureauService;
+import com.gryde.contract.BureauResultResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,16 @@ public class BureauController {
     private final BureauService bureauService;
 
     @GetMapping
-    public ResponseEntity<BureauSnapshotResponse> calculateBureauScore(
-            @RequestParam(name = "userId") UUID userId) {
+    public ResponseEntity<BureauResultResponse> calculateBureauScore(@RequestParam UUID userId) {
         if (bureauService.hasSelfBan(userId)) {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(
+                    new BureauResultResponse(true, null)
+            );
         }
+
         BureauSnapshotResponse response = bureauService.collectBureauData(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new BureauResultResponse(false, response)
+        );
     }
 }

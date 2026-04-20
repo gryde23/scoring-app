@@ -23,7 +23,7 @@ CREATE TABLE applications(
 CREATE TABLE application_decisions(
     application_id uuid primary key references applications(id),
     bureau_score integer check (bureau_score >= 0),
-    internal_score integer not null check (internal_score >= 0),
+    internal_score integer check (internal_score >= 0),
     ml_default_probability numeric(5,4) check(ml_default_probability >= 0 and ml_default_probability <= 1),
     antifraud_score integer check (antifraud_score >= 0),
     antifraud_flags jsonb,
