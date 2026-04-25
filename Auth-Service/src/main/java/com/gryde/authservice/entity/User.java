@@ -23,8 +23,8 @@ public class User {
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
