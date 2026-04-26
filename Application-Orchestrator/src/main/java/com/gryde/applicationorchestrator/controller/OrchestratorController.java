@@ -6,6 +6,7 @@ import com.gryde.contract.DecisionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -21,8 +22,10 @@ public class OrchestratorController {
     @PostMapping
     public ResponseEntity<DecisionDTO> createApplication(
             @RequestBody ApplicationCreateRequest request,
-            @RequestParam UUID userId
+            Authentication authentication
     ) {
+        UUID userId = (UUID) authentication.getPrincipal();
+
         DecisionDTO decisionDTO = service.startScoring(request, userId);
         return ResponseEntity.status(HttpStatus.OK).body(decisionDTO);
     }

@@ -5,4 +5,5 @@ include 'scoring-service'
 include 'scoring-contract'
 include 'bureau-service'
 include 'antifraud-service'
+include 'auth-service'
 
