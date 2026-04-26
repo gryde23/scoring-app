@@ -37,7 +37,7 @@ public class RegistrationService {
     @Transactional
     public StartRegistrationResponse startRegistration(StartRegistrationRequest request) {
         String phone = request.phone();
-        KnownClient knownClient = knownClientRepository.findByPhoneAndActiveIsTrue(phone)
+        KnownClient knownClient = knownClientRepository.findActiveByPhone(phone)
                 .orElseThrow(() -> new NoSuchElementException("Client with phone " + phone + " not found"));
 
         if (userRepository.existsByPhone(phone)) {
