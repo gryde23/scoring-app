@@ -13,12 +13,15 @@ create table users(
     created_at timestamp
 );
 
-create table verification_codes(
+create table registration_verifications(
     id uuid primary key,
     phone varchar(15) not null,
-    code varchar not null,
+    client_id uuid not null,
+    code_hash varchar not null,
+    status varchar not null,
     expires_at timestamp not null,
-    used boolean not null,
     attempts integer not null,
+    registration_token_hash varchar,
+    registration_token_expires_at timestamp,
     created_at timestamp
 )

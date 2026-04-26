@@ -1,6 +1,7 @@
 package com.gryde.authservice.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -36,12 +37,27 @@ public class JwtService {
                 .subject(userId.toString())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
+                .claim("typ", "access")
                 .claim("role", role)
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public Claims parseToken(String token) {
+    public String generateRegistrationToken(UUID verificationId) {
+        Instant now = Instant.now();
+        Instant expiration = now.plus(10, ChronoUnit.MINUTES);
+
+        return Jwts.builder()
+                .issuer(issuer)
+                .subject(verificationId.toString())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiration))
+                .claim("typ", "registration")
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    private Claims parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .requireIssuer(issuer)
@@ -50,13 +66,36 @@ public class JwtService {
                 .getPayload();
     }
 
-    public UUID extractUserId(String token) {
+    public Claims parseRegistrationToken(String token) {
         Claims claims = parseToken(token);
+        requireTokenType(claims, "registration");
+        return claims;
+    }
+
+    public Claims parseAccessToken(String token) {
+        Claims claims = parseToken(token);
+        requireTokenType(claims, "access");
+        return claims;
+    }
+
+    private void requireTokenType(Claims claims, String expectedType) {
+        String actualType = claims.get("typ", String.class);
+
+        if (!expectedType.equals(actualType)) {
+            throw new JwtException("Invalid token type");
+        }
+    }
+
+    public UUID extractVerificationId(Claims claims) {
+        String verificationId = claims.get("verificationId", String.class);
+        return UUID.fromString(verificationId);
+    }
+
+    public UUID extractUserId(Claims claims) {
         return UUID.fromString(claims.getSubject());
     }
 
-    public String extractRole(String token) {
-        Claims claims = parseToken(token);
+    public String extractRole(Claims claims) {
         return claims.get("role", String.class);
     }
 
