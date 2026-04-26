@@ -1,6 +1,7 @@
 package com.gryde.authservice.service;
 
 import com.gryde.authservice.dto.StartRegistrationResponse;
+import com.gryde.authservice.dto.VerificationRequest;
 import com.gryde.authservice.dto.VerificationResponse;
 import com.gryde.authservice.dto.enums.CodeStatus;
 import com.gryde.authservice.entity.RegistrationVerification;
@@ -48,14 +49,17 @@ public class VerificationService {
         entity.setClientId(clientId);
         entity.setStatus(CodeStatus.CODE_SENT);
 
-        repository.save(entity);
+        var saved = repository.save(entity);
         logger.info("DEV ONLY: Код верификации для номера {}: {}", phone, code);
 
-        return entity.getId();
+        return saved.getId();
     }
 
+    @Transactional
+    public VerificationResponse verifyPhone(VerificationRequest request) {
+        UUID verificationId = request.verificationId();
+        String code = request.code();
 
-    public VerificationResponse verifyPhone(UUID verificationId, String code) {
         RegistrationVerification registrationVerification = repository.findById(verificationId)
                 .orElseThrow(() -> new NoSuchElementException("Verification with UUID: " + verificationId + " not found"));
 
@@ -71,7 +75,7 @@ public class VerificationService {
             throw new IllegalStateException("Код верификации уже использован.");
         }
 
-        if (registrationVerification.getAttempts() > 3) {
+        if (registrationVerification.getAttempts() >= 3) {
             throw new MaxAttemptsExceededException("Превышен лимит попыток верификации. Требуется создание нового кода.");
         }
 
@@ -83,6 +87,7 @@ public class VerificationService {
             throw new IllegalArgumentException("Неверный код. Осталось попыток: " + (3 - attempts));
         } else {
             registrationVerification.setStatus(CodeStatus.VERIFIED);
+            repository.save(registrationVerification);
             String registrationToken = jwtService.generateRegistrationToken(verificationId);
 
             return new VerificationResponse(registrationToken);

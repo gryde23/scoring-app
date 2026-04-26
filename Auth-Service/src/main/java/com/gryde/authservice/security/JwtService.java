@@ -87,8 +87,7 @@ public class JwtService {
     }
 
     public UUID extractVerificationId(Claims claims) {
-        String verificationId = claims.get("verificationId", String.class);
-        return UUID.fromString(verificationId);
+        return UUID.fromString(claims.getSubject());
     }
 
     public UUID extractUserId(Claims claims) {
