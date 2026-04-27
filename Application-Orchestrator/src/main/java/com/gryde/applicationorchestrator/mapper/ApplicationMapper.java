@@ -1,7 +1,10 @@
 package com.gryde.applicationorchestrator.mapper;
 
 import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
+import com.gryde.applicationorchestrator.dto.ApplicationShortResponse;
+import com.gryde.applicationorchestrator.dto.ApplicationWithDecisionResponse;
 import com.gryde.applicationorchestrator.entity.Application;
+import com.gryde.applicationorchestrator.entity.Decision;
 import com.gryde.contract.ApplicationResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +27,6 @@ public interface ApplicationMapper {
 
     @Mapping(target = "userId", source = "userUUID")
     ApplicationResponse toResponse(Application application);
+
+    ApplicationShortResponse toShortResponse(Application application);
 }

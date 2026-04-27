@@ -10,17 +10,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/antifraud-service" />
             <option value="$PROJECT_DIR$/application-orchestrator" />
+            <option value="$PROJECT_DIR$/auth-service" />
             <option value="$PROJECT_DIR$/bureau-service" />
             <option value="$PROJECT_DIR$/scoring-contract" />
             <option value="$PROJECT_DIR$/scoring-service" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Auth-Service" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Auth-Service" />
           </set>
         </option>
       </GradleProjectSettings>

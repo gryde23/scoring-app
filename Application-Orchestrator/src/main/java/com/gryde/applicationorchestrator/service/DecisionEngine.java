@@ -81,7 +81,7 @@ public class DecisionEngine {
         }
 
         if (bureauScore < MIN_BUREAU_SCORE) {
-            decisionReasons.add("БКИ скор ниже минимального порога");
+            decisionReasons.add("Плохая кредитная история");
         }
 
         if (recommendedLimit == null || recommendedLimit <= 0) {
@@ -90,7 +90,7 @@ public class DecisionEngine {
 
         if (isGreaterOrEqual(defaultProbability, HIGH_DEFAULT_PROBABILITY)
                 && bureauScore < BORDERLINE_BUREAU_SCORE) {
-            decisionReasons.add("Высокий риск дефолта при слабом БКИ скоре");
+            decisionReasons.add("Высокий риск дефолта при слабой кредитной истории");
         }
 
         if (isGreaterOrEqual(defaultProbability, ELEVATED_DEFAULT_PROBABILITY)
@@ -99,7 +99,7 @@ public class DecisionEngine {
         }
 
         if (bureauScore < BORDERLINE_BUREAU_SCORE && antifraudScore >= MEDIUM_ANTIFRAUD_SCORE) {
-            decisionReasons.add("Слабый БКИ скор при среднем антифрод риске");
+            decisionReasons.add("Слабая кредитная история при среднем антифрод риске");
         }
 
         if (internalScore < LOW_INTERNAL_SCORE
