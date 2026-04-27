@@ -1,0 +1,159 @@
+services:
+
+  # ─── Databases ────────────────────────────────────────────────────────────────
+  orchestrator_db:
+    image: postgres:17-alpine
+    container_name: orchestrator_db
+    environment:
+      POSTGRES_DB: orchestrator_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - orchestrator_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  bureau_db:
+    image: postgres:17-alpine
+    container_name: bureau_db
+    environment:
+      POSTGRES_DB: bureau_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - bureau_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  auth_db:
+    image: postgres:17-alpine
+    container_name: auth_db
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  # ─── ML / Python ──────────────────────────────────────────────────────────────
+  ml-service:
+    build:
+      context: ./ScoringModel
+    container_name: ml-service
+    restart: unless-stopped
+    networks:
+      - backend
+
+  # ─── Java Services ────────────────────────────────────────────────────────────
+  scoring-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: Scoring-Service
+        SERVICE_NAME: scoring-service
+    container_name: scoring-service
+    restart: unless-stopped
+    environment:
+      SERVICES_ML_URL: http://ml-service:8000
+    depends_on:
+      - ml-service
+    networks:
+      - backend
+
+  bureau-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: Bureau-Service
+        SERVICE_NAME: bureau-service
+    container_name: bureau-service
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://bureau_db:5432/bureau_db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - bureau_db
+    networks:
+      - backend
+
+  antifraud-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: Antifraud-Service
+        SERVICE_NAME: antifraud-service
+    container_name: antifraud-service
+    restart: unless-stopped
+    networks:
+      - backend
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: Auth-Service
+        SERVICE_NAME: auth-service
+    container_name: auth-service
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth_db:5432/auth_db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      SMS_API: ${SMS_API}
+    depends_on:
+      - auth_db
+    networks:
+      - backend
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: Application-Orchestrator
+        SERVICE_NAME: application-orchestrator
+    container_name: orchestrator
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://orchestrator_db:5432/orchestrator_db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      SERVICES_SCORING_URL: http://scoring-service:8082
+      SERVICES_BUREAU_URL: http://bureau-service:8083
+      SERVICES_ANTIFRAUD_URL: http://antifraud-service:8084
+    depends_on:
+      - orchestrator_db
+      - scoring-service
+      - bureau-service
+      - antifraud-service
+      - auth-service
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  orchestrator_data:
+  bureau_data:
+  auth_data:
