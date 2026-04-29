@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="orchestrator_service@localhost" uuid="2d38ec3b-a1ab-4b30-b8c2-30a2379404f7">
+    <data-source source="LOCAL" name="orchestrator_db@localhost" uuid="2d38ec3b-a1ab-4b30-b8c2-30a2379404f7">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

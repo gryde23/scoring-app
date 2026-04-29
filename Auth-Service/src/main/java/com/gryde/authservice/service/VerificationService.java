@@ -1,22 +1,20 @@
 package com.gryde.authservice.service;
 
+import com.gryde.authservice.dto.SmsRuCallCheckAddResponse;
+import com.gryde.authservice.dto.SmsRuCallCheckStatusResponse;
 import com.gryde.authservice.dto.StartRegistrationResponse;
 import com.gryde.authservice.dto.VerificationRequest;
 import com.gryde.authservice.dto.VerificationResponse;
-import com.gryde.authservice.dto.enums.CodeStatus;
+import com.gryde.authservice.dto.enums.VerificationStatus;
 import com.gryde.authservice.entity.RegistrationVerification;
 import com.gryde.authservice.exception.CodeExpiredException;
-import com.gryde.authservice.exception.MaxAttemptsExceededException;
+import com.gryde.authservice.exception.SmsRuCallCheckException;
 import com.gryde.authservice.repository.RegistrationVerificationRepository;
 import com.gryde.authservice.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -25,72 +23,88 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VerificationService {
 
+    private static final String SMS_RU_WAITING_STATUS = "400";
+    private static final String SMS_RU_VERIFIED_STATUS = "401";
+    private static final String SMS_RU_EXPIRED_STATUS = "402";
+
     private final RegistrationVerificationRepository repository;
-    private final PasswordEncoder passwordEncoder;
-    private final Logger logger = LoggerFactory.getLogger(VerificationService.class);
-    private static final SecureRandom secureRandom = new SecureRandom();
+    private final SmsRuCallCheckClient smsRuCallCheckClient;
     private final JwtService jwtService;
 
     @Transactional
-    public UUID createVerificationCode(String phone, UUID clientId) {
-        RegistrationVerification lastCreatedCode = repository.findFirstByPhoneOrderByCreatedAtDesc(phone);
+    public StartRegistrationResponse createCallVerification(String phone, UUID clientId) {
+        RegistrationVerification lastVerification = repository.findFirstByPhoneOrderByCreatedAtDesc(phone);
 
-        if (lastCreatedCode != null &&
-            LocalDateTime.now().isBefore(lastCreatedCode.getCreatedAt().plusSeconds(60))) {
-            throw new IllegalArgumentException("Код может быть отправлен раз в 60 секунд");
+        if (lastVerification != null &&
+            LocalDateTime.now().isBefore(lastVerification.getCreatedAt().plusSeconds(60))) {
+            throw new IllegalArgumentException("Повторную проверку можно создать раз в 60 секунд");
         }
 
-        String code = String.valueOf(secureRandom.nextInt(100_000, 1_000_000));
-        String codeHash = passwordEncoder.encode(code);
+        SmsRuCallCheckAddResponse providerResponse = smsRuCallCheckClient.startVerification(phone);
 
         RegistrationVerification entity = new RegistrationVerification();
         entity.setPhone(phone);
-        entity.setCode(codeHash);
         entity.setClientId(clientId);
-        entity.setStatus(CodeStatus.CODE_SENT);
+        entity.setStatus(VerificationStatus.PENDING);
+        entity.setProviderCheckId(providerResponse.check_id());
+        entity.setCallPhone(providerResponse.call_phone());
 
-        var saved = repository.save(entity);
-        logger.info("DEV ONLY: Код верификации для номера {}: {}", phone, code);
+        RegistrationVerification saved = repository.save(entity);
 
-        return saved.getId();
+        return new StartRegistrationResponse(
+                saved.getId().toString(),
+                providerResponse.call_phone(),
+                providerResponse.call_phone_pretty(),
+                saved.getExpiresAt(),
+                "Позвоните на указанный номер для подтверждения телефона"
+        );
     }
 
     @Transactional
     public VerificationResponse verifyPhone(VerificationRequest request) {
         UUID verificationId = request.verificationId();
-        String code = request.code();
 
         RegistrationVerification registrationVerification = repository.findById(verificationId)
                 .orElseThrow(() -> new NoSuchElementException("Verification with UUID: " + verificationId + " not found"));
 
+        if (VerificationStatus.USED.equals(registrationVerification.getStatus())) {
+            throw new IllegalStateException("Проверка телефона уже использована.");
+        }
+
+        if (VerificationStatus.VERIFIED.equals(registrationVerification.getStatus())) {
+            String registrationToken = jwtService.generateRegistrationToken(verificationId);
+            return new VerificationResponse(VerificationStatus.VERIFIED, registrationToken);
+        }
 
         if (registrationVerification.getExpiresAt().isBefore(LocalDateTime.now())) {
-            registrationVerification.setStatus(CodeStatus.EXPIRED);
+            registrationVerification.setStatus(VerificationStatus.EXPIRED);
             repository.save(registrationVerification);
-            throw new CodeExpiredException("Код верификации истёк.");
+            throw new CodeExpiredException("Время проверки звонком истекло.");
         }
 
-        if (registrationVerification.getStatus().equals(CodeStatus.USED) ||
-            registrationVerification.getStatus().equals(CodeStatus.VERIFIED)) {
-            throw new IllegalStateException("Код верификации уже использован.");
+        SmsRuCallCheckStatusResponse providerStatus =
+                smsRuCallCheckClient.getStatus(registrationVerification.getProviderCheckId());
+
+        String checkStatus = providerStatus.check_status();
+
+        if (SMS_RU_WAITING_STATUS.equals(checkStatus)) {
+            return new VerificationResponse(VerificationStatus.PENDING, null);
         }
 
-        if (registrationVerification.getAttempts() >= 3) {
-            throw new MaxAttemptsExceededException("Превышен лимит попыток верификации. Требуется создание нового кода.");
+        if (SMS_RU_EXPIRED_STATUS.equals(checkStatus)) {
+            registrationVerification.setStatus(VerificationStatus.EXPIRED);
+            repository.save(registrationVerification);
+            throw new CodeExpiredException("Время проверки звонком истекло.");
         }
 
-        int attempts = registrationVerification.getAttempts() + 1;
-        registrationVerification.setAttempts(attempts);
+        if (SMS_RU_VERIFIED_STATUS.equals(checkStatus)) {
+            registrationVerification.setStatus(VerificationStatus.VERIFIED);
+            repository.save(registrationVerification);
 
-        if (!passwordEncoder.matches(code, registrationVerification.getCode())) {
-            repository.save(registrationVerification);
-            throw new IllegalArgumentException("Неверный код. Осталось попыток: " + (3 - attempts));
-        } else {
-            registrationVerification.setStatus(CodeStatus.VERIFIED);
-            repository.save(registrationVerification);
             String registrationToken = jwtService.generateRegistrationToken(verificationId);
-
-            return new VerificationResponse(registrationToken);
+            return new VerificationResponse(VerificationStatus.VERIFIED, registrationToken);
         }
+
+        throw new SmsRuCallCheckException("Неожиданный статус проверки звонком: " + checkStatus);
     }
 }

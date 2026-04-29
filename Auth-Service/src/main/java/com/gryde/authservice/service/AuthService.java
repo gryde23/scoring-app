@@ -4,6 +4,7 @@ import com.gryde.authservice.dto.AuthResponse;
 import com.gryde.authservice.dto.LoginRequest;
 import com.gryde.authservice.entity.User;
 import com.gryde.authservice.exception.IncorrectPasswordException;
+import com.gryde.authservice.exception.UserNotFoundException;
 import com.gryde.authservice.repository.UserRepository;
 import com.gryde.authservice.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         String phone = request.phone();
         User user = userRepository.findByPhone(phone)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с номером " + phone + " не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с номером " + phone + " не найден"));
 
         String password = request.password();
 

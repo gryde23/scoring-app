@@ -20,3 +20,7 @@ spring:
       secret: ${JWT_SECRET}
       issuer: "auth-service"
       access-token-expiration-minutes: 60
+
+sms:
+  sms-ru:
+    api-id: ${SMS_API}

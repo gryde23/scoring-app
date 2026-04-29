@@ -2,6 +2,7 @@ package com.gryde.authservice.service;
 
 import com.gryde.authservice.dto.SmsRuCallCheckAddResponse;
 import com.gryde.authservice.dto.SmsRuCallCheckStatusResponse;
+import com.gryde.authservice.exception.SmsRuCallCheckException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class SmsRuCallCheckClient {
                 .body(SmsRuCallCheckAddResponse.class);
 
         if (response == null || !"OK".equals(response.status())) {
-            throw new IllegalStateException("Не удалось создать проверку звонком");
+            throw new SmsRuCallCheckException("Не удалось создать проверку звонком");
         }
 
         return response;
@@ -50,7 +51,7 @@ public class SmsRuCallCheckClient {
                 .body(SmsRuCallCheckStatusResponse.class);
 
         if (response == null || !"OK".equals(response.status())) {
-            throw new IllegalStateException("Не удалось проверить статус звонка");
+            throw new SmsRuCallCheckException("Не удалось проверить статус звонка");
         }
 
         return response;

@@ -4,12 +4,13 @@ import com.gryde.authservice.dto.AuthResponse;
 import com.gryde.authservice.dto.RegistrationRequest;
 import com.gryde.authservice.dto.StartRegistrationRequest;
 import com.gryde.authservice.dto.StartRegistrationResponse;
-import com.gryde.authservice.dto.enums.CodeStatus;
+import com.gryde.authservice.dto.enums.VerificationStatus;
 import com.gryde.authservice.entity.KnownClient;
 import com.gryde.authservice.entity.RegistrationVerification;
 import com.gryde.authservice.entity.User;
 import com.gryde.authservice.exception.UnverifiedPhoneException;
 import com.gryde.authservice.exception.UserAlreadyExistsException;
+import com.gryde.authservice.exception.UserNotFoundException;
 import com.gryde.authservice.repository.KnownClientRepository;
 import com.gryde.authservice.repository.RegistrationVerificationRepository;
 import com.gryde.authservice.repository.UserRepository;
@@ -38,16 +39,13 @@ public class RegistrationService {
     public StartRegistrationResponse startRegistration(StartRegistrationRequest request) {
         String phone = request.phone();
         KnownClient knownClient = knownClientRepository.findActiveByPhone(phone)
-                .orElseThrow(() -> new NoSuchElementException("Client with phone " + phone + " not found"));
+                .orElseThrow(() -> new UserNotFoundException("Client with phone " + phone + " not found"));
 
         if (userRepository.existsByPhone(phone)) {
-            throw new IllegalArgumentException("Пользователь с таким номером уже зарегистрирован");
+            throw new UserAlreadyExistsException("Пользователь с таким номером уже зарегистрирован");
         }
 
-        UUID verificationId = verificationService.createVerificationCode(phone, knownClient.getId());
-
-        return new StartRegistrationResponse(verificationId.toString(),
-                "Код верификации отправлен");
+        return verificationService.createCallVerification(phone, knownClient.getId());
     }
 
     @Transactional
@@ -58,10 +56,9 @@ public class RegistrationService {
         RegistrationVerification verification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new NoSuchElementException("Verification with UUID: " + verificationId + " not found"));
 
-        if (!verification.getStatus().equals(CodeStatus.VERIFIED)) {
+        if (!verification.getStatus().equals(VerificationStatus.VERIFIED)) {
             throw new UnverifiedPhoneException("Номер телефона не подтвержден.");
         }
-
 
         UUID userId = verification.getClientId();
         String phone = verification.getPhone();
@@ -79,7 +76,7 @@ public class RegistrationService {
 
         userRepository.save(user);
 
-        verification.setStatus(CodeStatus.USED);
+        verification.setStatus(VerificationStatus.USED);
         verificationRepository.save(verification);
 
         String accessToken = jwtService.generateAccessToken(userId, "USER");
