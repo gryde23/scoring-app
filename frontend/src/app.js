@@ -167,8 +167,31 @@ async function apiFetch(url, options = {}) {
 }
 
 function extractError(body, response) {
-  if (typeof body === "string") return body;
-  return body?.message || body?.error || `Ошибка запроса: ${response.status}`;
+  if (typeof body === "string" && body.trim()) return body;
+
+  if (body && typeof body === "object") {
+    if (body.message) return body.message;
+    if (body.detail) return body.detail;
+    if (body.error && body.error !== response.statusText) return body.error;
+    if (body.title) return body.title;
+  }
+
+  return fallbackErrorMessage(response);
+}
+
+function fallbackErrorMessage(response) {
+  const messages = {
+    400: "Некорректный запрос.",
+    401: "Нужно войти в систему.",
+    403: "Доступ запрещен.",
+    404: "Данные не найдены.",
+    409: "Запрос конфликтует с текущим состоянием данных.",
+    410: "Срок действия операции истек.",
+    429: "Слишком много попыток. Попробуйте позже.",
+    502: "Backend service is unavailable."
+  };
+
+  return messages[response.status] || response.statusText || `Ошибка запроса: ${response.status}`;
 }
 
 function navigate(route) {

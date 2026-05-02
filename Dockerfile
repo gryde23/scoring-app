@@ -12,7 +12,7 @@ COPY Scoring-Contract ./scoring-contract
 # Минимальный settings.gradle — только нужные подпроекты
 RUN printf "rootProject.name = 'scoring-app'\ninclude '${SERVICE_NAME}'\ninclude 'scoring-contract'\n" > settings.gradle
 
-RUN gradle :${SERVICE_NAME}:bootJar --no-daemon -x test
+RUN gradle :${SERVICE_NAME}:clean :${SERVICE_NAME}:bootJar --no-daemon -x test
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
