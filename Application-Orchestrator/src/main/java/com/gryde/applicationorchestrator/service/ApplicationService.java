@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.rmi.AccessException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -50,7 +49,7 @@ public class ApplicationService {
     }
 
     public List<ApplicationShortResponse> getApplicationsByUserId(UUID userId) {
-        List<Application> applications = applicationRepository.findApplicationsByUserId(userId);
+        List<Application> applications = applicationRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
 
         return applications.stream().map(applicationMapper::toShortResponse).toList();
     }
