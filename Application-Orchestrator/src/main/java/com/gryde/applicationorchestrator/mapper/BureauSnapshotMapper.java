@@ -12,4 +12,6 @@ public interface BureauSnapshotMapper {
     @Mapping(target = "application", source = "application")
     @Mapping(target = "createdAt", ignore = true)
     BureauSnapshot toEntity(Application application, BureauSnapshotResponse dto);
+
+    BureauSnapshotResponse toResponse(BureauSnapshot snapshot);
 }
