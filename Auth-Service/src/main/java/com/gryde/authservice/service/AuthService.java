@@ -31,7 +31,7 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IncorrectPasswordException("Неверный пароль.");
         } else {
-            String token = jwtService.generateAccessToken(user.getId(), "USER");
+            String token = jwtService.generateAccessToken(user.getId(), user.getRole());
 
             return new AuthResponse(
                     user.getId(),

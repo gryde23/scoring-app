@@ -4,6 +4,7 @@ import com.gryde.authservice.dto.AuthResponse;
 import com.gryde.authservice.dto.RegistrationRequest;
 import com.gryde.authservice.dto.StartRegistrationRequest;
 import com.gryde.authservice.dto.StartRegistrationResponse;
+import com.gryde.authservice.dto.enums.UserRole;
 import com.gryde.authservice.dto.enums.VerificationStatus;
 import com.gryde.authservice.entity.KnownClient;
 import com.gryde.authservice.entity.RegistrationVerification;
@@ -73,13 +74,14 @@ public class RegistrationService {
         user.setId(userId);
         user.setPassword(passwordHash);
         user.setPhone(phone);
+        user.setRole(UserRole.USER);
 
         userRepository.save(user);
 
         verification.setStatus(VerificationStatus.USED);
         verificationRepository.save(verification);
 
-        String accessToken = jwtService.generateAccessToken(userId, "USER");
+        String accessToken = jwtService.generateAccessToken(userId, UserRole.USER);
 
         return new AuthResponse(
                 userId,

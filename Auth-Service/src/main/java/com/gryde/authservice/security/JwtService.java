@@ -1,5 +1,6 @@
 package com.gryde.authservice.security;
 
+import com.gryde.authservice.dto.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -28,7 +29,7 @@ public class JwtService {
     @Value("${spring.security.jwt.access-token-expiration-minutes}")
     private long accessTokenExpirationMinutes;
 
-    public String generateAccessToken(UUID userId, String role) {
+    public String generateAccessToken(UUID userId, UserRole role) {
         Instant now = Instant.now();
         Instant expiration = now.plus(accessTokenExpirationMinutes, ChronoUnit.MINUTES);
 
