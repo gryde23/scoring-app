@@ -1,5 +1,6 @@
 package com.gryde.applicationorchestrator.admin;
 
+import com.gryde.applicationorchestrator.admin.dto.AdminUpdateApplicationRequest;
 import com.gryde.applicationorchestrator.admin.dto.ApplicationFullReviewResponse;
 import com.gryde.applicationorchestrator.admin.dto.ManualReviewApplicationResponse;
 import com.gryde.applicationorchestrator.dto.ApplicationShortResponse;
@@ -10,10 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,5 +47,16 @@ public class AdminController {
             @PathVariable UUID userId
     ) {
         return applicationService.getUserApplications(userId);
+    }
+
+    @PatchMapping("/{applicationId}")
+    public ApplicationFullReviewResponse updateApplication(
+            @PathVariable UUID applicationId,
+            @RequestBody AdminUpdateApplicationRequest updateApplicationRequest,
+            Authentication authentication
+    ) {
+        UUID employeeId = (UUID) authentication.getPrincipal();
+
+        return applicationService.updateApplication(applicationId, updateApplicationRequest, employeeId);
     }
 }

@@ -1,5 +1,7 @@
 package com.gryde.applicationorchestrator.admin;
 
+import com.gryde.applicationorchestrator.admin.dto.ActionType;
+import com.gryde.applicationorchestrator.admin.dto.AdminUpdateApplicationRequest;
 import com.gryde.applicationorchestrator.admin.dto.ApplicationFullReviewResponse;
 import com.gryde.applicationorchestrator.admin.dto.ManualReviewApplicationResponse;
 import com.gryde.applicationorchestrator.dto.ApplicationShortResponse;
@@ -14,6 +16,7 @@ import com.gryde.contract.ApplicationResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import com.gryde.contract.DecisionDTO;
 import com.gryde.contract.enums.FinalDecision;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +50,7 @@ public class AdminApplicationService {
     @Transactional(readOnly = true)
     public ApplicationFullReviewResponse getApplicationFullInfo(UUID applicationId) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Application with UUID: " + applicationId + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Заявка не найдена"));
 
         UUID userId = application.getUserUUID();
 
@@ -72,5 +75,37 @@ public class AdminApplicationService {
                 .stream()
                 .map(applicationMapper::toShortResponse)
                 .toList();
+    }
+
+    @Transactional
+    public ApplicationFullReviewResponse updateApplication(
+            UUID applicationId,
+            AdminUpdateApplicationRequest request,
+            UUID employeeId
+    ) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new EntityNotFoundException("Заявка не найдена"));
+
+        if (!application.getDecision().getFinalDecision().equals(FinalDecision.MANUAL_REVIEW)) {
+            throw new IllegalStateException("Редактировать можно только заявку в статусе MANUAL_REVIEW");
+        }
+
+        String oldValue = application.toString();
+
+        adminApplicationMapper.updateApplicationFromRequest(request, application);
+
+        String newValue = application.toString();
+
+        AdminReviewAction action = new AdminReviewAction();
+        action.setApplication(application);
+        action.setActionType(ActionType.UPDATED_APPLICATION);
+        action.setEmployeeId(employeeId);
+        action.setOldValue(oldValue);
+        action.setNewValue(newValue);
+        action.setComment(request.comment());
+
+        adminReviewActionRepository.save(action);
+
+        return getApplicationFullInfo(applicationId);
     }
 }
