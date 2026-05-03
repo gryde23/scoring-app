@@ -13,10 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "application_decisions")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Decision {
     @Id
     @Column(name = "application_id", nullable = false)

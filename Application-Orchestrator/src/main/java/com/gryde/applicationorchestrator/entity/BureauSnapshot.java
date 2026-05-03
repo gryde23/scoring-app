@@ -9,10 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "application_bureau_snapshot")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class BureauSnapshot {
 
     @Id

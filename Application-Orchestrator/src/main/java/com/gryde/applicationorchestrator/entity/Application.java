@@ -9,10 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "applications")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
