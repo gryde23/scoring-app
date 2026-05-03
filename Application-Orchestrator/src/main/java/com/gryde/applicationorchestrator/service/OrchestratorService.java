@@ -7,6 +7,7 @@ import com.gryde.applicationorchestrator.dto.ApplicationCreateRequest;
 import com.gryde.applicationorchestrator.dto.DecisionResult;
 import com.gryde.contract.*;
 import com.gryde.contract.enums.ApplicationStatus;
+import com.gryde.contract.enums.FinalDecision;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -125,7 +126,10 @@ public class OrchestratorService {
             DecisionResponse decision = applicationDecisionService.save(
                     application.id(), scoringResponse, bureauData.bureauScore(), antifraudResponse, decisionResult
             );
-            applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
+
+            if (!decision.finalDecision().equals(FinalDecision.MANUAL_REVIEW)) {
+                applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
+            }
 
             return decision;
         } catch (Exception e) {
