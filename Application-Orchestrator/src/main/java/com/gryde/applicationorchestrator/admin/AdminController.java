@@ -2,6 +2,7 @@ package com.gryde.applicationorchestrator.admin;
 
 import com.gryde.applicationorchestrator.admin.dto.ApplicationFullReviewResponse;
 import com.gryde.applicationorchestrator.admin.dto.ManualReviewApplicationResponse;
+import com.gryde.applicationorchestrator.dto.ApplicationShortResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,10 +36,17 @@ public class AdminController {
         return applicationService.getManualReviewApplications(pageable);
     }
 
-    @GetMapping("/{application_id}")
+    @GetMapping("/{applicationId}")
     public ApplicationFullReviewResponse getApplicationFullInfo(
-            @PathVariable(name = "application_id") UUID applicationId
+            @PathVariable UUID applicationId
     ) {
         return applicationService.getApplicationFullInfo(applicationId);
+    }
+
+    @GetMapping("/users/{userId}")
+    public List<ApplicationShortResponse> getUserApplications(
+            @PathVariable UUID userId
+    ) {
+        return applicationService.getUserApplications(userId);
     }
 }

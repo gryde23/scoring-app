@@ -66,4 +66,11 @@ public class AdminApplicationService {
                 userApplications
         );
     }
+
+    public List<ApplicationShortResponse> getUserApplications(UUID userId) {
+        return applicationRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(applicationMapper::toShortResponse)
+                .toList();
+    }
 }
