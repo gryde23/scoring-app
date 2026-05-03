@@ -1,10 +1,7 @@
 package com.gryde.antifraudservice;
 
-import com.gryde.contract.AntifraudRequest;
-import com.gryde.contract.AntifraudResponse;
-import com.gryde.contract.ApplicationResponse;
-import com.gryde.contract.BureauSnapshotResponse;
-import com.gryde.contract.DecisionDTO;
+import com.gryde.contract.*;
+import com.gryde.contract.DecisionResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +21,7 @@ public class AntifraudService {
     public AntifraudResponse antifraudCheck(AntifraudRequest request) {
         ApplicationResponse newApp = request.newApplication();
         List<ApplicationResponse> previousApps = request.applications() == null ? List.of() : request.applications();
-        List<DecisionDTO> previousDecisions = request.decisions() == null ? List.of() : request.decisions();
+        List<DecisionResponse> previousDecisions = request.decisions() == null ? List.of() : request.decisions();
         BureauSnapshotResponse bureau = request.bureauSnapshot();
 
         int score = 0;
@@ -87,13 +84,13 @@ public class AntifraudService {
         }
 
         long highAntifraudCount = previousDecisions.stream()
-                .map(DecisionDTO::antifraudScore)
+                .map(DecisionResponse::antifraudScore)
                 .filter(Objects::nonNull)
                 .filter(value -> value >= 500)
                 .count();
 
         long mediumAntifraudCount = previousDecisions.stream()
-                .map(DecisionDTO::antifraudScore)
+                .map(DecisionResponse::antifraudScore)
                 .filter(Objects::nonNull)
                 .filter(value -> value >= 250)
                 .count();

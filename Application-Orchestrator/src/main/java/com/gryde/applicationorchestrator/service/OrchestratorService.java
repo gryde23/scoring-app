@@ -82,19 +82,19 @@ public class OrchestratorService {
 
     public AntifraudResponse callAntifraudCheck(UUID userId, BureauSnapshotResponse bureauSnapshot, ApplicationResponse newApplication) {
         List<ApplicationResponse> applications = applicationService.findCompletedApplicationsByUserIdForLastMonth(userId);
-        List<DecisionDTO> decisions = applicationDecisionService.findDecisionsByUserIdForLastMonth(userId);
+        List<DecisionResponse> decisions = applicationDecisionService.findDecisionsByUserIdForLastMonth(userId);
 
         return antifraudClient.antifraudCheck(new AntifraudRequest(newApplication, applications, decisions, bureauSnapshot));
     }
 
 
-    public DecisionDTO startScoring(ApplicationCreateRequest request, UUID userId) {
+    public DecisionResponse startScoring(ApplicationCreateRequest request, UUID userId) {
         ApplicationResponse application = applicationService.createApplication(request, userId);
 
         try {
             BureauResultResponse bureauResponse = callBureau(userId, application);
             if (bureauResponse.selfBanned()) {
-                DecisionDTO decision = applicationDecisionService.saveEarlyRejection(
+                DecisionResponse decision = applicationDecisionService.saveEarlyRejection(
                         application.id(),
                         null,
                         null,
@@ -107,7 +107,7 @@ public class OrchestratorService {
             BureauSnapshotResponse bureauData = bureauResponse.bureauData();
             AntifraudResponse antifraudResponse = callAntifraudCheck(userId, bureauData, application);
             if (antifraudResponse.antifraudScore() > EARLY_REJECT_ANTIFRAUD_SCORE) {
-                DecisionDTO decision = applicationDecisionService.saveEarlyRejection(
+                DecisionResponse decision = applicationDecisionService.saveEarlyRejection(
                         application.id(),
                         bureauData.bureauScore(),
                         antifraudResponse,
@@ -122,7 +122,7 @@ public class OrchestratorService {
 
             DecisionResult decisionResult = decisionEngine.decide(scoringResponse, bureauData.bureauScore(), antifraudResponse);
 
-            DecisionDTO decision = applicationDecisionService.save(
+            DecisionResponse decision = applicationDecisionService.save(
                     application.id(), scoringResponse, bureauData.bureauScore(), antifraudResponse, decisionResult
             );
             applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);

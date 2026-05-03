@@ -7,7 +7,7 @@ import com.gryde.applicationorchestrator.mapper.DecisionMapper;
 import com.gryde.applicationorchestrator.repository.ApplicationRepository;
 import com.gryde.applicationorchestrator.repository.DecisionRepository;
 import com.gryde.contract.AntifraudResponse;
-import com.gryde.contract.DecisionDTO;
+import com.gryde.contract.DecisionResponse;
 import com.gryde.contract.ScoringResponse;
 import com.gryde.contract.enums.FinalDecision;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,12 +26,12 @@ public class DecisionService {
     private final ApplicationRepository applicationRepository;
     private final DecisionMapper decisionMapper;
 
-    public List<DecisionDTO> findDecisionsByUserIdForLastMonth(UUID userId) {
+    public List<DecisionResponse> findDecisionsByUserIdForLastMonth(UUID userId) {
         LocalDateTime startDate = LocalDateTime.now().minusDays(30);
         return decisionMapper.toDtoList(decisionRepository.findDecisionsByUserIdForLastMonth(userId, startDate));
     }
 
-    public DecisionDTO save(
+    public DecisionResponse save(
             UUID applicationId,
             ScoringResponse scoring,
             Integer bureauScore,
@@ -56,7 +56,7 @@ public class DecisionService {
         return decisionMapper.toDto(saved);
     }
 
-    public DecisionDTO saveEarlyRejection(
+    public DecisionResponse saveEarlyRejection(
             UUID applicationId,
             Integer bureauScore,
             AntifraudResponse antifraud,

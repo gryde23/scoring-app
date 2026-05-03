@@ -5,7 +5,7 @@ import java.util.List;
 public record AntifraudRequest(
         ApplicationResponse newApplication,
         List<ApplicationResponse> applications,
-        List<DecisionDTO> decisions,
+        List<DecisionResponse> decisions,
         BureauSnapshotResponse bureauSnapshot
 ) {
 }
