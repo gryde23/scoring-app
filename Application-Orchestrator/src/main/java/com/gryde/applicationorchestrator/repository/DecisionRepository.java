@@ -14,7 +14,7 @@ public interface DecisionRepository extends JpaRepository<Decision, UUID> {
     @Query(
             """
             select ad from Decision ad
-            where ad.application.userUUID = :userId
+            where ad.application.userId = :userId
             """
     )
     List<Decision> findApplicationDecisionsByUserId(
@@ -24,7 +24,7 @@ public interface DecisionRepository extends JpaRepository<Decision, UUID> {
 
     @Query("""
             select ad from Decision ad
-            where ad.application.userUUID = :userId
+            where ad.application.userId = :userId
             and ad.createdAt >= :startDate
             """)
     List<Decision> findDecisionsByUserIdForLastMonth(

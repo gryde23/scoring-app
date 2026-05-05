@@ -17,7 +17,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     @Query(
             """
             select a from Application a
-            where a.userUUID = :userId
+            where a.userId = :userId
             """
     )
     List<Application> findAllByUserIdOrderByCreatedAtDesc(
@@ -26,7 +26,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     @Query("""
             select a from Application a
-            where a.userUUID = :userId
+            where a.userId = :userId
             and a.createdAt >= :startDate
             and a.status <> 'IN_PROGRESS'
             """)

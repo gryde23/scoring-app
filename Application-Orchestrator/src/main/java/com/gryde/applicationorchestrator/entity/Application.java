@@ -16,7 +16,7 @@ public class Application {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userUUID;
+    private UUID userId;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;

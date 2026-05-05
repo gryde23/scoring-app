@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changeset/v.1/v.1.0-create-tables.sql
+  - include:
+      file: db/changelog/changeset/v.1/v.1.1-add-table-admin-review-actions.sql

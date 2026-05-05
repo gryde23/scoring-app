@@ -49,7 +49,7 @@ public class AdminApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new EntityNotFoundException("Заявка не найдена"));
 
-        UUID userId = application.getUserUUID();
+        UUID userId = application.getUserId();
 
         ApplicationResponse applicationResponse = applicationMapper.toResponse(application);
         BureauSnapshotResponse bureauSnapshotResponse = bureauSnapshotMapper.toResponse(application.getBureauSnapshot());
@@ -153,6 +153,9 @@ public class AdminApplicationService {
         action.setComment(request.comment());
 
         adminReviewActionRepository.save(action);
+
+        application.setStatus(ApplicationStatus.COMPLETED);
+        applicationRepository.save(application);
 
         return decisionMapper.toDto(decision);
     }

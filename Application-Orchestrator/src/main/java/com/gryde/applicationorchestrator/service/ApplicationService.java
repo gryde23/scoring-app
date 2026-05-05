@@ -59,7 +59,7 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Application with UUID: " + applicationId + " not found"));
 
-        if (!application.getUserUUID().equals(userId)) {
+        if (!application.getUserId().equals(userId)) {
             throw new IllegalArgumentException("Not user's application");
         }
 

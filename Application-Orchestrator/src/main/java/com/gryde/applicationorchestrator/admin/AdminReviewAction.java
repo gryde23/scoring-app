@@ -18,7 +18,7 @@ public class AdminReviewAction {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
+    @JoinColumn(name = "application_id", nullable = false)
     private Application application;
 
     @Column(name = "employee_id", nullable = false)
