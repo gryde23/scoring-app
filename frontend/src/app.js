@@ -1,3 +1,5 @@
+import { createAdminRoutes } from "./admin.js";
+
 const STORAGE_KEY = "scoringAppAuth";
 
 const enums = {
@@ -60,6 +62,113 @@ const labels = {
   APPROVED: "Одобрено",
   REJECTED: "Отказ",
   MANUAL_REVIEW: "Ручная проверка"
+};
+
+const decisionReasonLabels = {
+  "Внутренний скоринг выявил стоп-фактор": "Анкета не прошла один из обязательных скоринговых критериев.",
+  "Риск дефолта выше 10%": "Высокая вероятность просрочки по кредиту.",
+  "Высокий антифрод риск": "Заявка не прошла проверку безопасности.",
+  "Плохая кредитная история": "Кредитная история не соответствует требованиям банка.",
+  "Рекомендованный лимит отсутствует": "По текущим данным лимит карты рассчитать не удалось.",
+  "Высокий риск дефолта при слабой кредитной истории": "Высокий риск просрочки при недостаточно сильной кредитной истории.",
+  "Повышенный риск дефолта при среднем антифрод риске": "Повышенный риск просрочки и дополнительные признаки риска по заявке.",
+  "Слабая кредитная история при среднем антифрод риске": "Кредитная история и проверка безопасности требуют дополнительного анализа.",
+  "Низкий внутренний скор при дополнительных риск-факторах": "Итоговая оценка анкеты ниже проходного уровня из-за дополнительных факторов риска.",
+  "Повышенный риск дефолта": "Повышенная вероятность просрочки.",
+  "Средний антифрод риск": "Заявка требует дополнительной проверки безопасности.",
+  "Пограничный БКИ скор": "Кредитный рейтинг находится в пограничной зоне.",
+  "Низкий внутренний скор": "Итоговая оценка анкеты ниже проходного уровня.",
+  "Рекомендованный лимит ниже минимального порога": "Расчетный лимит ниже минимально доступного.",
+  "Расчетный лимит ниже минимального порога": "Расчетный лимит ниже минимально доступного.",
+  "Много негативных факторов внутреннего скоринга": "По анкете найдено несколько факторов повышенного риска.",
+  "Средний БКИ скор при заметном риске дефолта": "Кредитный рейтинг и риск просрочки требуют ручной проверки.",
+  "Средний БКИ скор при повышенном антифрод риске": "Кредитный рейтинг и проверка безопасности требуют ручной проверки.",
+  "Средний внутренний скор при заметном риске дефолта": "Оценка анкеты и риск просрочки требуют ручной проверки.",
+  "Установлен самозапрет на кредитование": "На клиенте установлен самозапрет на кредитование.",
+  "Подозрительная заявка": "Заявка не прошла проверку безопасности.",
+  "Возраст больше 60": "Возрастная группа повышает риск по скоринговой модели.",
+  "Высокая долговая нагрузка": "Высокая текущая долговая нагрузка.",
+  "Средняя долговая нагрузка": "Текущая долговая нагрузка выше комфортного уровня.",
+  "Пенсионер": "Тип занятости повышает риск по скоринговой модели.",
+  "Безработный": "Нет подтвержденной занятости.",
+  "Стаж работы меньше 5 лет": "Стаж работы меньше 5 лет.",
+  "Малый стаж": "Недостаточный стаж работы.",
+  "Отсутствует профильное образование": "Не хватает факторов, повышающих оценку анкеты.",
+  "Отсутствие имущества": "Не указано имущество, которое могло бы повысить оценку анкеты.",
+  "Отсутствует зарплатный проект": "Нет зарплатного проекта в банке.",
+  "Отсутствует депозит": "Нет депозитных продуктов в банке.",
+  "Слишком низкий доход": "Доход ниже минимального порога для продукта.",
+  "Ненадежный тип занятости": "Тип занятости и уровень дохода не соответствуют требованиям продукта.",
+  INTERNAL_SCORE_STOP_FACTOR: "Анкета не прошла один из обязательных скоринговых критериев.",
+  STOP_FACTOR: "Анкета не прошла один из обязательных скоринговых критериев.",
+  DEFAULT_PROBABILITY_HIGH: "Высокая вероятность просрочки по кредиту.",
+  DEFAULT_PROBABILITY_GT_10: "Высокая вероятность просрочки по кредиту.",
+  ML_DEFAULT_PROBABILITY_HIGH: "Высокая вероятность просрочки по кредиту.",
+  ML_DEFAULT_PROBABILITY_GT_10: "Высокая вероятность просрочки по кредиту.",
+  HIGH_DEFAULT_PROBABILITY: "Высокая вероятность просрочки по кредиту.",
+  HIGH_ANTIFRAUD_RISK: "Заявка не прошла проверку безопасности.",
+  ANTIFRAUD_HIGH_RISK: "Заявка не прошла проверку безопасности.",
+  FRAUD_RISK_HIGH: "Заявка не прошла проверку безопасности.",
+  SUSPICIOUS_APPLICATION: "Заявка не прошла проверку безопасности.",
+  BAD_CREDIT_HISTORY: "Кредитная история не соответствует требованиям банка.",
+  POOR_CREDIT_HISTORY: "Кредитная история не соответствует требованиям банка.",
+  LOW_BUREAU_SCORE: "Кредитный рейтинг ниже минимального уровня.",
+  BUREAU_SCORE_LOW: "Кредитный рейтинг ниже минимального уровня.",
+  BORDERLINE_BUREAU_SCORE: "Кредитный рейтинг находится в пограничной зоне.",
+  RECOMMENDED_LIMIT_MISSING: "По текущим данным лимит карты рассчитать не удалось.",
+  NO_RECOMMENDED_LIMIT: "По текущим данным лимит карты рассчитать не удалось.",
+  RECOMMENDED_LIMIT_BELOW_MIN: "Расчетный лимит ниже минимально доступного.",
+  LIMIT_BELOW_MIN: "Расчетный лимит ниже минимально доступного.",
+  LOW_INTERNAL_SCORE: "Итоговая оценка анкеты ниже проходного уровня.",
+  MANY_NEGATIVE_SCORING_FACTORS: "По анкете найдено несколько факторов повышенного риска.",
+  SELF_BAN: "На клиенте установлен самозапрет на кредитование.",
+  SELF_BANNED: "На клиенте установлен самозапрет на кредитование.",
+  LOW_INCOME: "Доход ниже минимального порога для продукта.",
+  INCOME_TOO_LOW: "Доход ниже минимального порога для продукта.",
+  MONTHLY_INCOME_TOO_LOW: "Доход ниже минимального порога для продукта.",
+  TOO_LOW_INCOME: "Доход ниже минимального порога для продукта.",
+  HIGH_DTI: "Высокая текущая долговая нагрузка.",
+  HIGH_DEBT_LOAD: "Высокая текущая долговая нагрузка.",
+  HIGH_DEBT_BURDEN: "Высокая текущая долговая нагрузка.",
+  DEBT_LOAD_HIGH: "Высокая текущая долговая нагрузка.",
+  MEDIUM_DEBT_LOAD: "Текущая долговая нагрузка выше комфортного уровня.",
+  MEDIUM_DEBT_BURDEN: "Текущая долговая нагрузка выше комфортного уровня.",
+  AGE_OVER_60: "Возрастная группа повышает риск по скоринговой модели.",
+  PENSIONER: "Тип занятости повышает риск по скоринговой модели.",
+  UNEMPLOYED: "Нет подтвержденной занятости.",
+  EMPLOYMENT_TYPE_UNEMPLOYED: "Нет подтвержденной занятости.",
+  UNEMPLOYED_LOW_INCOME: "Тип занятости и уровень дохода не соответствуют требованиям продукта.",
+  UNRELIABLE_EMPLOYMENT_TYPE: "Тип занятости и уровень дохода не соответствуют требованиям продукта.",
+  SHORT_EMPLOYMENT_LENGTH: "Стаж работы меньше 5 лет.",
+  LOW_EMPLOYMENT_LENGTH: "Недостаточный стаж работы.",
+  SMALL_EMPLOYMENT_LENGTH: "Недостаточный стаж работы.",
+  NO_SPECIALIZED_EDUCATION: "Не хватает факторов, повышающих оценку анкеты.",
+  SECONDARY_EDUCATION: "Не хватает факторов, повышающих оценку анкеты.",
+  NO_PROPERTY: "Не указано имущество, которое могло бы повысить оценку анкеты.",
+  PROPERTY_ABSENT: "Не указано имущество, которое могло бы повысить оценку анкеты.",
+  NO_SALARY_PROJECT: "Нет зарплатного проекта в банке.",
+  SALARY_PROJECT_ABSENT: "Нет зарплатного проекта в банке.",
+  NO_DEPOSIT: "Нет депозитных продуктов в банке.",
+  DEPOSIT_ABSENT: "Нет депозитных продуктов в банке."
+};
+
+const antifraudFlagLabels = {
+  MULTIPLE_APPLICATIONS_30D: "За последние 30 дней было подано несколько заявок.",
+  HIGH_APPLICATION_VELOCITY_30D: "За последние 30 дней подано слишком много заявок.",
+  REPEAT_APPLICATION_TOO_FAST: "Новая заявка подана слишком скоро после предыдущей.",
+  FULL_NAME_CHANGED: "ФИО отличается от данных в предыдущей заявке.",
+  EMPLOYMENT_TYPE_CHANGED_TOO_FAST: "Тип занятости изменился слишком быстро после предыдущей заявки.",
+  REGION_CHANGED_TOO_FAST: "Регион изменился слишком быстро после предыдущей заявки.",
+  INCOME_DOUBLED_30D: "Доход значительно вырос по сравнению с недавней заявкой.",
+  INCOME_INCREASED_50_PERCENT_7D: "Доход резко вырос по сравнению с недавней заявкой.",
+  PREVIOUS_HIGH_ANTIFRAUD_SCORE: "По прошлым заявкам уже были высокие признаки риска.",
+  MULTIPLE_SUSPICIOUS_PREVIOUS_DECISIONS: "По прошлым заявкам несколько раз были признаки риска.",
+  THIN_CREDIT_HISTORY_AND_REPEAT_APPLICATIONS: "Короткая кредитная история при повторных заявках.",
+  NO_BUREAU_HISTORY_AND_REPEAT_APPLICATIONS: "Нет данных кредитной истории при повторных заявках.",
+  RECENT_OVERDUE_AND_REPEAT_APPLICATIONS: "Есть свежие просрочки при повторных заявках.",
+  CREDIT_HISTORY_STARTED_BEFORE_18: "Кредитная история выглядит некорректно по возрасту клиента.",
+  EMPLOYMENT_STARTED_BEFORE_16: "Стаж работы выглядит некорректно по возрасту клиента.",
+  EMPLOYMENT_STARTED_BEFORE_18: "Стаж работы требует проверки по возрасту клиента."
 };
 
 const cards = [
@@ -135,6 +244,29 @@ function authHeader() {
   if (!auth?.accessToken) return {};
   const tokenType = auth.tokenType || "Bearer";
   return { Authorization: `${tokenType} ${auth.accessToken}` };
+}
+
+function getTokenPayload() {
+  const token = getAuth()?.accessToken;
+  const payload = token?.split(".")[1];
+  if (!payload) return null;
+
+  try {
+    const normalized = payload.replaceAll("-", "+").replaceAll("_", "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const binary = atob(padded);
+    const json = decodeURIComponent(
+      Array.from(binary, (char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`).join("")
+    );
+
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+function isAdmin() {
+  return getTokenPayload()?.role === "ADMIN";
 }
 
 async function apiFetch(url, options = {}) {
@@ -237,6 +369,207 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function formatDecisionReasons(reasons) {
+  return formatReasonList(reasons, {
+    ...decisionReasonLabels,
+    ...antifraudFlagLabels
+  }, "Есть дополнительные факторы риска по заявке.");
+}
+
+function formatAntifraudFlags(flags) {
+  return formatReasonList(flags, antifraudFlagLabels, "Заявка требует дополнительной проверки безопасности.");
+}
+
+function formatReasonList(value, dictionary, technicalFallback) {
+  const formatted = expandReasonValue(value)
+    .map((item) => formatReasonValue(item, dictionary, technicalFallback))
+    .filter(Boolean);
+
+  return [...new Set(formatted)];
+}
+
+function expandReasonValue(value) {
+  if (value === null || value === undefined) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap(expandReasonValue);
+  }
+
+  if (value && typeof value === "object") {
+    const preferred = [
+      value.message,
+      value.description,
+      value.reason,
+      value.code,
+      value.type,
+      value.name,
+      value.key,
+      value.value,
+      value.decisionReasons,
+      value.decision_reasons,
+      value.antifraudFlags,
+      value.antifraud_flags
+    ].filter((item) => item !== undefined && item !== null);
+
+    return (preferred.length ? preferred : Object.values(value)).flatMap(expandReasonValue);
+  }
+
+  const raw = stripOuterQuotes(String(value).trim());
+  if (!raw) return [];
+
+  const assignedValue = extractAssignedReasonValue(raw);
+  if (assignedValue !== raw) {
+    return expandReasonValue(assignedValue);
+  }
+
+  const parsed = parseReasonJson(raw);
+  if (parsed !== undefined) {
+    return expandReasonValue(parsed);
+  }
+
+  const pgArray = parsePostgresArray(raw);
+  if (pgArray) {
+    return pgArray.flatMap(expandReasonValue);
+  }
+
+  const split = splitReasonList(raw);
+  if (split.length > 1) {
+    return split.flatMap(expandReasonValue);
+  }
+
+  return [raw];
+}
+
+function formatReasonValue(value, dictionary, technicalFallback) {
+  const raw = stripOuterQuotes(String(value ?? "").trim());
+  if (!raw) return "";
+
+  const label = findReasonLabel(raw, dictionary);
+  if (label) return label;
+
+  return isTechnicalReason(raw) ? technicalFallback : raw;
+}
+
+function findReasonLabel(reason, dictionary) {
+  for (const candidate of reasonCandidates(reason)) {
+    const normalized = normalizeReasonKey(candidate);
+    const stripped = stripReasonPrefix(normalized);
+    const label = dictionary[candidate] ||
+      dictionary[normalized] ||
+      dictionary[stripped];
+
+    if (label) return label;
+  }
+
+  return "";
+}
+
+function reasonCandidates(reason) {
+  const raw = stripOuterQuotes(String(reason).trim());
+  const candidates = [raw];
+  const assignedValue = extractAssignedReasonValue(raw);
+
+  if (assignedValue !== raw) {
+    candidates.push(assignedValue);
+  }
+
+  const pathMatch = raw.match(/(?:^|[.:/\\])([A-Za-z][A-Za-z0-9_]*)(?:\s*)$/);
+  if (pathMatch) {
+    candidates.push(pathMatch[1]);
+  }
+
+  const technicalMatches = raw.match(/[A-Za-z][A-Za-z0-9]*(?:[_:.-][A-Za-z0-9]+)+/g) || [];
+  candidates.push(...technicalMatches);
+
+  return [...new Set(candidates.map(stripOuterQuotes).filter(Boolean))];
+}
+
+function extractAssignedReasonValue(reason) {
+  const match = reason.match(/^(?:[\w.:-]+\s*[:=]\s*)+(.+)$/);
+  return match ? stripOuterQuotes(match[1].trim()) : reason;
+}
+
+function parseReasonJson(reason) {
+  if (!((reason.startsWith("[") && reason.endsWith("]")) ||
+        (reason.startsWith("{") && reason.endsWith("}")) ||
+        (reason.startsWith("\"") && reason.endsWith("\"")))) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(reason);
+  } catch {
+    return undefined;
+  }
+}
+
+function parsePostgresArray(reason) {
+  if (!(reason.startsWith("{") && reason.endsWith("}"))) return null;
+
+  const body = reason.slice(1, -1).trim();
+  if (!body) return [];
+
+  return body
+    .split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+    .map((item) => stripOuterQuotes(item.trim()))
+    .filter(Boolean);
+}
+
+function splitReasonList(reason) {
+  if (!/[\n;]/.test(reason)) return [reason];
+
+  return reason
+    .split(/[\n;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function stripOuterQuotes(value) {
+  let result = String(value ?? "").trim();
+
+  for (let index = 0; index < 3; index += 1) {
+    const first = result[0];
+    const last = result[result.length - 1];
+    const isQuoted = (first === "\"" && last === "\"") ||
+      (first === "'" && last === "'") ||
+      (first === "`" && last === "`");
+
+    if (!isQuoted) break;
+    result = result.slice(1, -1).trim();
+  }
+
+  return result;
+}
+
+function normalizeReasonKey(reason) {
+  return String(reason)
+    .trim()
+    .replace(/([a-z\d])([A-Z])/g, "$1_$2")
+    .replace(/[^A-Za-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .toUpperCase();
+}
+
+function stripReasonPrefix(key) {
+  let result = key;
+  let previous = "";
+
+  while (result !== previous) {
+    previous = result;
+    result = result.replace(
+      /^(DECISION|DECISION_REASON|REASON|SCORING|SCORING_REASON|REJECT|REJECT_REASON|MANUAL|MANUAL_REVIEW|MANUAL_REVIEW_REASON|FINAL_DECISION_REASON|ANTIFRAUD|ANTIFRAUD_FLAG|FLAG)_+/,
+      ""
+    );
+  }
+
+  return result;
+}
+
+function isTechnicalReason(reason) {
+  return /^[A-Z0-9_.:-]+$/.test(reason) ||
+    (/^[a-z0-9_.:-]+$/.test(reason) && /[_:.-]/.test(reason));
+}
+
 function field(name, label, type = "text", attrs = "") {
   return `
     <label class="field">
@@ -263,8 +596,9 @@ function selectField(name, label, options) {
 }
 
 function renderShell(pageHtml) {
-  const auth = getAuth();
   const authorized = isAuthenticated();
+  const showAdminLink = authorized && isAdmin();
+  const route = currentRoute();
 
   app.innerHTML = `
     <div class="app-shell">
@@ -280,6 +614,9 @@ function renderShell(pageHtml) {
             <a href="#/applications" data-route="/applications">Мои анкеты</a>
           </nav>
           <div class="session">
+            ${showAdminLink ? `
+              <a class="ghost-button ${route.startsWith("/admin") ? "active" : ""}" href="#/admin">Админка</a>
+            ` : ""}
             <button class="ghost-button" id="logoutButton" type="button">Выйти</button>
           </div>
         ` : ""}
@@ -297,7 +634,7 @@ function renderShell(pageHtml) {
   });
 
   document.querySelectorAll(".nav a").forEach((link) => {
-    if (link.dataset.route === currentRoute()) {
+    if (link.dataset.route === route) {
       link.classList.add("active");
     }
   });
@@ -739,14 +1076,13 @@ function numberValue(value) {
 }
 
 function decisionResultHtml(decision) {
-  const reasons = Array.isArray(decision.decisionReasons) && decision.decisionReasons.length > 0
-    ? decision.decisionReasons
-    : ["Причины отказа отсутствуют"];
+  const reasons = formatDecisionReasons(decision.decisionReasons);
+  const finalDecision = decision.finalDecision || "";
 
   return `
     <h2>Решение</h2>
-    <div class="decision-status ${String(decision.finalDecision || "").toLowerCase()}">
-      ${labels[decision.finalDecision] || decision.finalDecision || "Не указано"}
+    <div class="decision-status ${String(finalDecision).toLowerCase()}">
+      ${labels[finalDecision] || finalDecision || "Не указано"}
     </div>
     <dl class="detail-list">
       <div>
@@ -754,10 +1090,23 @@ function decisionResultHtml(decision) {
         <dd>${money(decision.approvedLimit)}</dd>
       </div>
     </dl>
+    ${decisionReasonsHtml(finalDecision, reasons)}
+  `;
+}
+
+function decisionReasonsHtml(finalDecision, reasons) {
+  if (!reasons.length && finalDecision !== "REJECTED") return "";
+
+  const title = finalDecision === "MANUAL_REVIEW"
+    ? "Причины ручной проверки"
+    : "Причины отказа";
+  const items = reasons.length ? reasons : ["Причины отказа не указаны."];
+
+  return `
     <div class="reasons">
-      <h3>Причины отказа</h3>
+      <h3>${title}</h3>
       <ul>
-        ${reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}
+        ${items.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}
       </ul>
     </div>
   `;
@@ -874,12 +1223,41 @@ function boolLabel(value) {
   return value ? "Да" : "Нет";
 }
 
+const adminRoutes = createAdminRoutes({
+  renderShell,
+  apiFetch,
+  escapeHtml,
+  dateTime,
+  money,
+  labels,
+  enums,
+  detailItem,
+  boolLabel,
+  numberValue,
+  formatDecisionReasons,
+  formatAntifraudFlags
+});
+
 function requireAuth(route) {
   if (!isAuthenticated()) {
     navigate("/auth");
     return false;
   }
   return true;
+}
+
+function renderAdminForbidden() {
+  renderShell(`
+    <section class="page-head compact">
+      <div>
+        <p class="eyebrow">Админка</p>
+        <h1>Доступ только для сотрудников</h1>
+      </div>
+    </section>
+    <section class="list-panel">
+      <div class="message error">У текущего пользователя нет роли ADMIN.</div>
+    </section>
+  `);
 }
 
 function render() {
@@ -891,6 +1269,11 @@ function render() {
   }
 
   if (!requireAuth(route)) return;
+
+  if (route.startsWith("/admin") && !isAdmin()) {
+    renderAdminForbidden();
+    return;
+  }
 
   if (route === "/home") {
     renderHome();
@@ -907,9 +1290,35 @@ function render() {
     return;
   }
 
+  if (route === "/admin") {
+    adminRoutes.renderAdminReview();
+    return;
+  }
+
   const applicationMatch = route.match(/^\/applications\/([0-9a-fA-F-]+)$/);
   if (applicationMatch) {
     renderApplicationDetail(applicationMatch[1]);
+    return;
+  }
+
+  const adminApplicationMatch = route.match(/^\/admin\/applications\/([0-9a-fA-F-]+)$/);
+  if (adminApplicationMatch) {
+    adminRoutes.renderAdminApplicationDetail(adminApplicationMatch[1], { readonly: false });
+    return;
+  }
+
+  const adminUserApplicationsMatch = route.match(/^\/admin\/users\/([0-9a-fA-F-]+)\/applications$/);
+  if (adminUserApplicationsMatch) {
+    adminRoutes.renderAdminUserApplications(adminUserApplicationsMatch[1]);
+    return;
+  }
+
+  const adminUserApplicationMatch = route.match(/^\/admin\/users\/([0-9a-fA-F-]+)\/applications\/([0-9a-fA-F-]+)$/);
+  if (adminUserApplicationMatch) {
+    adminRoutes.renderAdminApplicationDetail(adminUserApplicationMatch[2], {
+      readonly: true,
+      userId: adminUserApplicationMatch[1]
+    });
     return;
   }
 

@@ -4,12 +4,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const port = Number(process.env.PORT || 5175);
+const port = Number(process.env.PORT || 5174);
 
 const proxyTargets = [
   { prefix: "/api/auth", target: "http://127.0.0.1:8080" },
   { prefix: "/api/scoring", target: "http://127.0.0.1:8081" },
-  { prefix: "/api/applications", target: "http://127.0.0.1:8081" }
+  { prefix: "/api/applications", target: "http://127.0.0.1:8081" },
+  { prefix: "/api/admin", target: "http://127.0.0.1:8081" }
 ];
 
 const contentTypes = {
