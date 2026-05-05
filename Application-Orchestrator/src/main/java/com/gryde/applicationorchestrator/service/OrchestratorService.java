@@ -29,7 +29,7 @@ public class OrchestratorService {
     private final BureauClient bureauClient;
     private final AntifraudClient antifraudClient;
 
-    public ScoringResponse callInternalScoring(ApplicationCreateRequest request, BureauSnapshotResponse bureauData) {
+    private ScoringResponse callInternalScoring(ApplicationCreateRequest request, BureauSnapshotResponse bureauData) {
         BigDecimal totalIncome = BigDecimal.valueOf(request.monthlyIncome() + request.additionalIncome());
         BigDecimal debtToIncome = totalIncome.divide(totalIncome, 4, RoundingMode.HALF_UP);
         ScoringRequest scoringRequest = new ScoringRequest(
@@ -72,7 +72,7 @@ public class OrchestratorService {
         return scoringClient.calculate(scoringRequest);
     }
 
-    public BureauResultResponse callBureau(UUID userId, ApplicationResponse application) {
+    private BureauResultResponse callBureau(UUID userId, ApplicationResponse application) {
         BureauResultResponse bureauResponse = bureauClient.calculate(userId);
         if (bureauResponse.bureauData() != null) {
             bureauSnapshotService.saveSnapshot(application.id(), bureauResponse.bureauData());
@@ -81,11 +81,17 @@ public class OrchestratorService {
         return bureauResponse;
     }
 
-    public AntifraudResponse callAntifraudCheck(UUID userId, BureauSnapshotResponse bureauSnapshot, ApplicationResponse newApplication) {
+    private AntifraudResponse callAntifraudCheck(UUID userId, BureauSnapshotResponse bureauSnapshot, ApplicationResponse newApplication) {
         List<ApplicationResponse> applications = applicationService.findCompletedApplicationsByUserIdForLastMonth(userId);
         List<DecisionResponse> decisions = applicationDecisionService.findDecisionsByUserIdForLastMonth(userId);
 
         return antifraudClient.antifraudCheck(new AntifraudRequest(newApplication, applications, decisions, bureauSnapshot));
+    }
+
+    private void addAccountToBureau(UUID userId, Integer approvedLimit) {
+        AddAccountToBureauRequest request = new AddAccountToBureauRequest(userId, approvedLimit);
+
+        bureauClient.addAccountToBureau(request);
     }
 
 
@@ -129,6 +135,10 @@ public class OrchestratorService {
 
             if (!decision.finalDecision().equals(FinalDecision.MANUAL_REVIEW)) {
                 applicationService.updateStatus(application.id(), ApplicationStatus.COMPLETED);
+            }
+
+            if (decision.finalDecision().equals(FinalDecision.APPROVED)) {
+                addAccountToBureau(userId, decision.approvedLimit());
             }
 
             return decision;

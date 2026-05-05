@@ -1,6 +1,7 @@
 package com.gryde.bureauservice.controller;
 
 import com.gryde.bureauservice.service.BureauService;
+import com.gryde.contract.AddAccountToBureauRequest;
 import com.gryde.contract.BureauResultResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,14 @@ public class BureauController {
         return ResponseEntity.ok(
                 new BureauResultResponse(false, response)
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> addAccount(
+            @RequestBody AddAccountToBureauRequest request
+    ) {
+        bureauService.addAccount(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

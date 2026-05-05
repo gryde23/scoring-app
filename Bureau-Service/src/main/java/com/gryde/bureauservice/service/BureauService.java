@@ -4,17 +4,22 @@ import com.gryde.bureauservice.dto.CreditAccountDto;
 import com.gryde.bureauservice.dto.PaymentHistoryDto;
 import com.gryde.bureauservice.entity.CreditAccount;
 import com.gryde.bureauservice.enums.AccountStatus;
+import com.gryde.bureauservice.enums.AccountType;
 import com.gryde.bureauservice.mapper.CreditAccountMapper;
 import com.gryde.bureauservice.mapper.PaymentHistoryMapper;
 import com.gryde.bureauservice.projection.CreditAccountsAggProjection;
 import com.gryde.bureauservice.projection.PaymentHistoryAggProjection;
 import com.gryde.bureauservice.repository.BureauAggregationRepository;
+import com.gryde.bureauservice.repository.CreditAccountRepository;
 import com.gryde.bureauservice.repository.SelfBanDao;
+import com.gryde.contract.AddAccountToBureauRequest;
 import com.gryde.contract.BureauSnapshotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +28,7 @@ import java.util.UUID;
 public class BureauService {
 
     private final BureauAggregationRepository repository;
+    private final CreditAccountRepository accountRepository;
     private final BureauScoringEngine scoringEngine;
     private final SelfBanDao selfBanDao;
 
@@ -60,6 +66,21 @@ public class BureauService {
                 score
         );
 
+    }
+
+    @Transactional
+    public void addAccount(AddAccountToBureauRequest request) {
+        CreditAccount account = new CreditAccount();
+        account.setUserId(request.userId());
+        account.setAccountType(AccountType.CREDIT_CARD);
+        account.setStatus(AccountStatus.ACTIVE);
+        account.setOpenDate(LocalDate.now());
+        account.setOriginalAmount(BigDecimal.valueOf(request.approvedLimit()));
+        account.setCurrentBalance(BigDecimal.valueOf(request.approvedLimit()));
+        account.setMonthlyPayment(BigDecimal.ZERO);
+        account.setBankName("ScoreBank");
+
+        accountRepository.save(account);
     }
 
     private Integer nullToZero(Integer value) {

@@ -1,8 +1,10 @@
 package com.gryde.applicationorchestrator.client;
 
+import com.gryde.contract.AddAccountToBureauRequest;
 import com.gryde.contract.BureauResultResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -24,5 +26,12 @@ public class BureauClient {
                         .build())
                 .retrieve()
                 .body(BureauResultResponse.class);
+    }
+
+    public void addAccountToBureau(AddAccountToBureauRequest request) {
+        bureauRestClient.post()
+                .uri("/internal/bureau")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request);
     }
 }

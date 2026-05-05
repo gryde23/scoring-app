@@ -1,6 +1,7 @@
 package com.gryde.applicationorchestrator.admin;
 
 import com.gryde.applicationorchestrator.admin.dto.*;
+import com.gryde.applicationorchestrator.client.BureauClient;
 import com.gryde.applicationorchestrator.dto.ApplicationShortResponse;
 import com.gryde.applicationorchestrator.entity.Application;
 import com.gryde.applicationorchestrator.entity.Decision;
@@ -9,6 +10,7 @@ import com.gryde.applicationorchestrator.mapper.BureauSnapshotMapper;
 import com.gryde.applicationorchestrator.mapper.DecisionMapper;
 import com.gryde.applicationorchestrator.repository.ApplicationRepository;
 import com.gryde.applicationorchestrator.repository.DecisionRepository;
+import com.gryde.contract.AddAccountToBureauRequest;
 import com.gryde.contract.ApplicationResponse;
 import com.gryde.contract.BureauSnapshotResponse;
 import com.gryde.contract.DecisionResponse;
@@ -35,6 +37,7 @@ public class AdminApplicationService {
     private final ApplicationMapper applicationMapper;
     private final BureauSnapshotMapper bureauSnapshotMapper;
     private final DecisionMapper decisionMapper;
+    private final BureauClient bureauClient;
 
     @Transactional(readOnly = true)
     public Page<ManualReviewApplicationResponse> getManualReviewApplications(Pageable pageable) {
@@ -134,11 +137,15 @@ public class AdminApplicationService {
             decision.setFinalDecision(FinalDecision.APPROVED);
             decision.setApprovedLimit(request.approvedLimit());
             decision.setDecisionReasons(List.of(request.reason()));
+
+            bureauClient.addAccountToBureau(new AddAccountToBureauRequest(application.getUserId(), request.approvedLimit()));
         } else {
             decision.setFinalDecision(FinalDecision.REJECTED);
             decision.setApprovedLimit(0);
             decision.setDecisionReasons(List.of(request.reason()));
         }
+
+        decisionRepository.save(decision);
 
         String newDecision = decisionMapper.toDto(decision).toString();
 
